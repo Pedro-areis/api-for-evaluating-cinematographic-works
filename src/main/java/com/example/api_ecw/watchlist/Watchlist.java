@@ -3,12 +3,14 @@ package com.example.api_ecw.watchlist;
 import com.example.api_ecw.enums.WorkStatus;
 import com.example.api_ecw.enums.WorkType;
 import com.example.api_ecw.user.User;
-import com.example.api_ecw.works.Works;
+import com.example.api_ecw.works.Work;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,11 +37,13 @@ public class Watchlist {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "work_id", nullable = false)
-    private Works work;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Work work;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
