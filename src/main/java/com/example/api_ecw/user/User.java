@@ -1,4 +1,4 @@
-package com.example.api_ecw.User;
+package com.example.api_ecw.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
