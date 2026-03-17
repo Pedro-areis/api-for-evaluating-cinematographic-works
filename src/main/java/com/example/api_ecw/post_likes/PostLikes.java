@@ -1,4 +1,4 @@
-package com.example.api_ecw.posting_likes;
+package com.example.api_ecw.post_likes;
 
 import com.example.api_ecw.posts.Post;
 import com.example.api_ecw.user.User;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "posting_likes",
+@Table(name = "post_likes",
         uniqueConstraints = {
             @UniqueConstraint(name = "unique_user_post", columnNames = {"user_id", "post_id"})
         }
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostingLikes {
+public class PostLikes {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
