@@ -61,11 +61,7 @@ public class UserService {
             userOwner.setPasswordHash(updated.passwordHash());
         }
 
-        User userUpdated = new  User();
-        userUpdated.setName(userOwner.getName());
-        userUpdated.setEmail(userOwner.getEmail());
-        userUpdated.setPasswordHash(userOwner.getPasswordHash());
-        userUpdated.setDateBirth(userOwner.getDateBirth());
+        User userUpdated = userRepository.save(userOwner);
 
         return new UserResponse(
                 userUpdated.getName(),
