@@ -3,7 +3,9 @@ package com.example.api_ecw.user;
 import com.example.api_ecw.user.dto.UserRequest;
 import com.example.api_ecw.user.dto.UserResponse;
 import com.example.api_ecw.user.dto.UserUpdate;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,7 +19,7 @@ public class UserService {
     // Create a new User
     public UserResponse createUser(UserRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new DataIntegrityViolationException("Email already exists");
         }
 
         User newUser = new User();
@@ -40,11 +42,11 @@ public class UserService {
     // Update an existing User
     public UserResponse updateUser(UUID id, UserUpdate updated){
         User userOwner = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (updated.email() != null && !updated.email().isBlank()) {
             if (userRepository.findByEmail(updated.email()).isPresent()) {
-                throw new RuntimeException("Email already exists");
+                throw new DataIntegrityViolationException("Email already exists");
             }
             userOwner.setEmail(updated.email());
         }
