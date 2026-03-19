@@ -34,7 +34,7 @@ public class UserController {
             @Valid @RequestBody UserUpdate updated
     ){
         UserResponse response = userService.updateUser(id, updated);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // Delete an existing User
