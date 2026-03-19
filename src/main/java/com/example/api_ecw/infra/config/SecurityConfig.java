@@ -1,4 +1,4 @@
-package com.example.api_ecw.config;
+package com.example.api_ecw.infra.config;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Bean;
