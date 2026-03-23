@@ -18,7 +18,7 @@ public record UserRequest(
 
         @NotBlank(message = "Password is required")
         @Size(max= 255, message = "Password must be less than 255 characters")
-        String passwordHash,
+        String password,
 
         @NotNull(message = "Date of birth is required")
         LocalDate dateBirth
