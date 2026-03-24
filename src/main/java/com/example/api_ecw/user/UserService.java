@@ -6,6 +6,7 @@ import com.example.api_ecw.user.dto.UserUpdate;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // Create a new User
     public UserResponse createUser(UserRequest request) {
@@ -22,10 +24,12 @@ public class UserService {
             throw new DataIntegrityViolationException("Email already exists");
         }
 
+        var passwordHash = passwordEncoder.encode(request.password());
+
         User newUser = new User();
         newUser.setName(request.name());
         newUser.setEmail(request.email());
-        newUser.setPasswordHash(request.passwordHash());
+        newUser.setPassword(passwordHash);
         newUser.setDateBirth(request.dateBirth());
 
         User savedUser = userRepository.save(newUser);
@@ -33,7 +37,6 @@ public class UserService {
         return new UserResponse(
                 savedUser.getName(),
                 savedUser.getEmail(),
-                savedUser.getPasswordHash(),
                 savedUser.getDateBirth(),
                 savedUser.getCreatedAt()
         );
@@ -60,7 +63,8 @@ public class UserService {
         }
 
         if(updated.passwordHash() != null && !updated.passwordHash().isBlank()) {
-            userOwner.setPasswordHash(updated.passwordHash());
+            var passwordHash = passwordEncoder.encode(updated.passwordHash());
+            userOwner.setPassword(passwordHash);
         }
 
         User userUpdated = userRepository.save(userOwner);
@@ -68,7 +72,6 @@ public class UserService {
         return new UserResponse(
                 userUpdated.getName(),
                 userUpdated.getEmail(),
-                userUpdated.getPasswordHash(),
                 userUpdated.getDateBirth(),
                 userUpdated.getCreatedAt()
         );

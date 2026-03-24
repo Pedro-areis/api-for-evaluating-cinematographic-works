@@ -7,8 +7,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 // Controller for User
@@ -33,6 +35,13 @@ public class UserController {
             @PathVariable UUID id,
             @Valid @RequestBody UserUpdate updated
     ){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var user = (User) authentication.getPrincipal();
+
+        if (!user.getId().equals(id)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         UserResponse response = userService.updateUser(id, updated);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -40,6 +49,14 @@ public class UserController {
     // Delete an existing User
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        var user = (User) Objects.requireNonNull(authentication).getPrincipal();
+
+        if (!Objects.requireNonNull(user).getId().equals(id)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         String message = userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }

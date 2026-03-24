@@ -36,7 +36,7 @@ public class User implements  UserDetails {
     private String email;
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(name = "date_birth", nullable = false)
     private LocalDate dateBirth;
@@ -52,7 +52,7 @@ public class User implements  UserDetails {
 
     @Override
     public String getPassword() {
-        return this.passwordHash;
+        return this.password;
     }
 
     @Override
