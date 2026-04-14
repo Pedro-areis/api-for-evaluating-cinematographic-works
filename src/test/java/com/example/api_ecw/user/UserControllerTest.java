@@ -58,7 +58,7 @@ class UserControllerTest {
     class createUser {
         @Test
         @DisplayName("Should return 201 when create user with success")
-        void shouldReturn201WhenCreateUserWithSuccess() throws Exception {
+        void shouldReturn201_WhenCreateUserWithSuccess() throws Exception {
             // Arrange
             UserRequest userRequest = new UserRequest(
                     "name",
@@ -80,5 +80,37 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.dateBirth").value(userResponse.dateBirth().toString()))
                     .andExpect(jsonPath("$.createdAt").exists());
         }
+
+        @Test
+        @DisplayName("Should return 400 when request is not complete")
+        void shouldReturn400_WhenRequestIsNotComplete() throws  Exception {
+            // Arrange
+            UserRequest invalidRequest = new UserRequest(
+                    "name",
+                    "", // invalid email
+                    "password",
+                    LocalDate.parse("1990-01-01")
+            );
+
+            // Act & Assert
+            mockMvc.perform(post("/api/users/register")
+                        .with(csrf())
+                        .with(user("admin").roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    class updateUser {
+        @Test
+        @DisplayName("Should return 200 when update user with success")
+        void shouldReturn200_WhenUpdateUserWithSuccess() throws Exception {
+            // Arrange
+
+            // Act & Assert
+        }
+
     }
 }
