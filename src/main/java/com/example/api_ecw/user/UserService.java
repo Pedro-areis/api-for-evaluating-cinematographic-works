@@ -20,7 +20,7 @@ public class UserService {
 
     // Create a new User
     public UserResponse createUser(UserRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new DataIntegrityViolationException("Email already exists");
         }
 
