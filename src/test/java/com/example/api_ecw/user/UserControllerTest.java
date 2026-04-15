@@ -3,6 +3,7 @@ package com.example.api_ecw.user;
 import com.example.api_ecw.infra.config.TokenService;
 import com.example.api_ecw.user.dto.UserRequest;
 import com.example.api_ecw.user.dto.UserResponse;
+import com.example.api_ecw.user.dto.UserUpdate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -10,17 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,8 +113,61 @@ class UserControllerTest {
         @DisplayName("Should return 200 when update user with success")
         void shouldReturn200_WhenUpdateUserWithSuccess() throws Exception {
             // Arrange
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of());
+
+            UserUpdate userUpdate = new UserUpdate(
+                    null,
+                    "email",
+                    "password",
+                    null
+            );
+            when(userService.updateUser(userId, userUpdate)).thenReturn(userResponse);
 
             // Act & Assert
+            mockMvc.perform(patch("/api/users/update/{id}", userId)
+                        .with(csrf())
+                        .with(authentication(authToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdate)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name").value(userResponse.name()))
+                    .andExpect(jsonPath("$.email").value(userResponse.email()))
+                    .andExpect(jsonPath("$.dateBirth").value(userResponse.dateBirth().toString()))
+                    .andExpect(jsonPath("$.createdAt").exists());
+        }
+
+        @Test
+        @DisplayName("Should return 401 when user id different of id logged")
+        void shouldReturn401_WhenUserIdDifferentOfIdLogged() throws Exception {
+            // Arrange
+            UUID loggedId = UUID.randomUUID();
+            User user = new User();
+            user.setId(loggedId);
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of());
+
+            UUID otherId = UUID.randomUUID();
+
+            UserUpdate userUpdate = new UserUpdate(
+                    null,
+                    "email",
+                    "password",
+                    null
+            );
+
+            // Act & Assert
+            mockMvc.perform(patch("/api/users/update/{id}", otherId)
+                        .with(csrf())
+                        .with(authentication(authToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdate)))
+                    .andExpect(status().isUnauthorized());
         }
 
     }
