@@ -4,10 +4,13 @@ import com.example.api_ecw.infra.config.TokenService;
 import com.example.api_ecw.user.dto.UserRequest;
 import com.example.api_ecw.user.dto.UserResponse;
 import com.example.api_ecw.user.dto.UserUpdate;
+import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -23,10 +26,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -170,5 +173,73 @@ class UserControllerTest {
                     .andExpect(status().isUnauthorized());
         }
 
+    }
+
+    @Nested
+    class deleteUser {
+        @Test
+        @DisplayName("Should return 200 when delete user with success")
+        void shouldReturn200_WhenDeleteUserWithSuccess() throws  Exception {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+
+            User user = new User();
+            user.setId(userId);
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of());
+
+            when(userService.deleteUser(userId)).thenReturn("User deleted successfully");
+
+            // Act & Assert
+            mockMvc.perform(delete("/api/users/delete/{id}", userId)
+                        .with(csrf())
+                        .with(authentication(authToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should return 404 when user does not exist")
+        void shouldReturn404_WhenUserDoesNotExist() throws Exception{
+            // Arrange
+            UUID userId = UUID.randomUUID();
+
+            User user = new User();
+            user.setId(userId);
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of());
+
+            doThrow(new EntityNotFoundException("Usuário não encontrado"))
+                    .when(userService).deleteUser(userId);
+
+            // Act & Assert
+            mockMvc.perform(delete("/api/users/delete/{id}", userId)
+                        .with(csrf())
+                        .with(authentication(authToken)))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("Should return 401 when user id different of id logged")
+        void shouldReturn401_WhenUserIdDifferentOfIdLogged() throws Exception {
+            // Arrange
+            UUID loggedId = UUID.randomUUID();
+            UUID otherId = UUID.randomUUID();
+
+            User user = new User();
+            user.setId(loggedId);
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of());
+
+            when(userService.deleteUser(otherId)).thenThrow(new RuntimeException());
+
+            // Act & Assert
+            mockMvc.perform(delete("/api/users/delete/{id}", otherId)
+                        .with(csrf())
+                        .with(authentication(authToken)))
+                    .andExpect(status().isUnauthorized());
+        }
     }
 }
