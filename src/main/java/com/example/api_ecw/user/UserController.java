@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,11 +34,9 @@ public class UserController {
     @PatchMapping("/update/{id}")
     public  ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
-            @Valid @RequestBody UserUpdate updated
+            @Valid @RequestBody UserUpdate updated,
+            @AuthenticationPrincipal User user
     ){
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var user = (User) authentication.getPrincipal();
-
         if (!user.getId().equals(id)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -48,12 +47,12 @@ public class UserController {
 
     // Delete an existing User
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<String> deleteUser(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User user
+    ){
 
-        var user = (User) Objects.requireNonNull(authentication).getPrincipal();
-
-        if (!Objects.requireNonNull(user).getId().equals(id)){
+        if (user.getId().equals(id)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
