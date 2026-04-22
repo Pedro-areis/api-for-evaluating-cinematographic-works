@@ -24,7 +24,7 @@ public class TmdbIntegrationService {
 
     public TmdbSearchResponse getWorkByTitle(String title) {
         return restClient.get()
-                .uri("/search/movie?query={title}&include_adult=false&language=pt-BR&page=1&api_key={apiKey}", title, apiKey)
+                .uri("/search/multi?query={title}&include_adult=false&language=pt-BR&page=1&api_key={apiKey}", title, apiKey)
                 .retrieve()
                 .body(TmdbSearchResponse.class);
     }
