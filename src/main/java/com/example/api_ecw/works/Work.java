@@ -6,9 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,9 +41,13 @@ public class Work {
     @Column(name = "release_date", nullable = false)
     private LocalDate releaseDate;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "genre_ids", columnDefinition = "integer[]", nullable = false)
+    private List<Integer> genreIds;
+
+    @Column(name = "tmdb_id", nullable = false)
+    private UUID tmdbId;
 }

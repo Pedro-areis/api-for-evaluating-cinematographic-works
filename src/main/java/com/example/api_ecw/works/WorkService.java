@@ -18,6 +18,8 @@ public class WorkService {
                 newWork.getSynopsis(),
                 newWork.getScore(),
                 newWork.getType(),
+                newWork.getGenreIds(),
+                newWork.getTmdbId(),
                 newWork.getReleaseDate(),
                 newWork.getCreatedAt()
         );
