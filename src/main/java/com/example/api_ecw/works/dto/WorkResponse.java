@@ -14,7 +14,7 @@ public record WorkResponse(
         Float score,
         WorkType type,
         List<Integer> genreIds,
-        UUID tmdbId,
+        Integer tmdbId,
         LocalDate releaseDate,
         LocalDateTime createdAt
 ) {}

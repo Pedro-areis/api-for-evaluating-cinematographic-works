@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -36,11 +37,13 @@ public class Work {
     private Float score;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private WorkType type;
 
     @Column(name = "release_date", nullable = false)
     private LocalDate releaseDate;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -49,5 +52,5 @@ public class Work {
     private List<Integer> genreIds;
 
     @Column(name = "tmdb_id", nullable = false)
-    private UUID tmdbId;
+    private Integer tmdbId;
 }
