@@ -1,0 +1,3 @@
+ALTER TABLE works ADD COLUMN genre_ids INTEGER[];
+
+ALTER TABLE works DROP COLUMN end_date;
