@@ -1,7 +1,9 @@
 package com.example.api_ecw.works;
 
 import com.example.api_ecw.works.dto.TmdbSearchResponse;
+import com.example.api_ecw.works.dto.WorkRequest;
 import com.example.api_ecw.works.dto.WorkResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,10 @@ public class WorkController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<WorkResponse> createWork(@RequestBody Work work) {
+    public ResponseEntity<WorkResponse> createWork(
+            @Valid
+            @RequestBody WorkRequest work
+    ) {
         WorkResponse response = workService.create(work);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
