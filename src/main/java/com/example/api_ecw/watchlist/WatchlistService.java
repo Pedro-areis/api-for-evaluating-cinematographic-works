@@ -47,6 +47,7 @@ public class WatchlistService {
         watchlist.setUser(user);
         watchlist.setWork(work);
         watchlist.setType(WorkType.movie);
+        watchlist.setStatus(WorkStatus.pending);
 
         Watchlist savedWatchlist = watchlistRepository.save(watchlist);
 
@@ -142,4 +143,28 @@ public class WatchlistService {
 
         return newWork;
     }
+
+    public List<WatchlistResponse> getAllWorksFromWatchlist(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow();
+
+        List<Watchlist> works = watchlistRepository.findAllByUserId(user.getId());
+
+        return works.stream()
+                .map(this::convertFromDTO)
+                .toList();
+    }
+
+    private WatchlistResponse convertFromDTO(Watchlist watchlist) {
+        return new  WatchlistResponse(
+                watchlist.getId(),
+                watchlist.getWork().getId(),
+                watchlist.getUser().getId(),
+                watchlist.getName(),
+                watchlist.getType(),
+                watchlist.getStatus(),
+                watchlist.getCreatedAt()
+        );
+    }
+
 }
