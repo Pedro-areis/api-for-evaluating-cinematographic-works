@@ -63,7 +63,7 @@ public class WatchlistService {
     }
 
     private Work createWorkFromTmdbId(Integer tmdbId) {
-        TmdbMovieResponse response = tmdbIntegrationService.getWorkByTmdbId(tmdbId);
+        TmdbMovieResponse response = tmdbIntegrationService.getMovieByTmdbId(tmdbId);
 
         Work newWork = new Work();
 
