@@ -6,5 +6,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface WorkRepository extends JpaRepository<Work, UUID> {
-    Optional<Work> findById(UUID id);
+    Optional<Work> findByTmdbId(Integer tmdbId);
 }
