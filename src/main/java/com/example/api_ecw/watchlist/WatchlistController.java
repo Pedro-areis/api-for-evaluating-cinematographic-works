@@ -17,12 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class WatchlistController {
     private final WatchlistService watchlistService;
 
-    @PostMapping("/add-work/{tmdbId}")
-    public ResponseEntity<WatchlistResponse> addWorkToWatchlist(
+    @PostMapping("/add-movie/{tmdbId}")
+    public ResponseEntity<WatchlistResponse> addMovieToWatchlist(
             @AuthenticationPrincipal User loggedUser,
             @PathVariable Integer tmdbId
     ) {
         WatchlistResponse response = watchlistService.addMovieToWatchlist(loggedUser.getId(), tmdbId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/add-tv/{tmdbId}")
+    public ResponseEntity<WatchlistResponse> addTvToWatchlist(
+            @AuthenticationPrincipal User loggedUser,
+            @PathVariable Integer tmdbId
+    ) {
+        WatchlistResponse response = watchlistService.addTvToWatchlist(loggedUser.getId(), tmdbId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

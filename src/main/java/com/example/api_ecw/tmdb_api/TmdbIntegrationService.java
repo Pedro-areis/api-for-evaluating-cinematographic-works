@@ -2,6 +2,7 @@ package com.example.api_ecw.tmdb_api;
 
 import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
 import com.example.api_ecw.tmdb_api.dto.TmdbSearchResponse;
+import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -35,5 +36,12 @@ public class TmdbIntegrationService {
                 .uri("/movie/{tmdbId}?language=pt-BR&api_key={apiKey}", tmdbId, apiKey)
                 .retrieve()
                 .body(TmdbMovieResponse.class);
+    }
+
+    public TmdbTvResponse getTvByTmdbId(Integer tmdbId) {
+        return restClient.get()
+                .uri("/tv/{tmdbId}?language=pt-BR&api_key={apiKey}", tmdbId, apiKey)
+                .retrieve()
+                .body(TmdbTvResponse.class);
     }
 }

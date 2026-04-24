@@ -2,6 +2,7 @@ package com.example.api_ecw.watchlist;
 
 import com.example.api_ecw.enums.WorkStatus;
 import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
@@ -30,7 +31,7 @@ public class WatchlistService {
     @Transactional
     public WatchlistResponse addMovieToWatchlist(UUID userId, Integer tmdbId) {
         Work work = workRepository.findByTmdbId(tmdbId)
-                .orElseGet(() -> createWorkFromTmdbId(tmdbId));
+                .orElseGet(() -> createMovieFromTmdbId(tmdbId));
 
         User user = userRepository.findById(userId)
                 .orElseThrow();
@@ -46,7 +47,6 @@ public class WatchlistService {
         watchlist.setUser(user);
         watchlist.setWork(work);
         watchlist.setType(WorkType.movie);
-        watchlist.setStatus(WorkStatus.pending);
 
         Watchlist savedWatchlist = watchlistRepository.save(watchlist);
 
@@ -62,7 +62,65 @@ public class WatchlistService {
 
     }
 
-    private Work createWorkFromTmdbId(Integer tmdbId) {
+    @Transactional
+    public WatchlistResponse addTvToWatchlist (UUID userId, Integer tmdbId) {
+        Work work = workRepository.findByTmdbId(tmdbId)
+                .orElseGet(() -> createTvFromTmdbId(tmdbId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow();
+
+        boolean existingWatchlist = watchlistRepository.existsByUserAndWork(user, work);
+        if (existingWatchlist) {
+            throw new DataIntegrityViolationException("Work already in watchlist");
+        }
+
+        Watchlist watchlist = new Watchlist();
+
+        watchlist.setName(work.getTitle());
+        watchlist.setName(work.getTitle());
+        watchlist.setUser(user);
+        watchlist.setWork(work);
+        watchlist.setType(WorkType.series);
+        watchlist.setStatus(WorkStatus.pending);
+
+        Watchlist savedWatchlist = watchlistRepository.save(watchlist);
+
+        return new  WatchlistResponse(
+                savedWatchlist.getId(),
+                savedWatchlist.getWork().getId(),
+                savedWatchlist.getUser().getId(),
+                savedWatchlist.getName(),
+                savedWatchlist.getType(),
+                savedWatchlist.getStatus(),
+                savedWatchlist.getCreatedAt()
+        );
+    }
+
+    private Work createTvFromTmdbId(Integer tmdbId) {
+        TmdbTvResponse response = tmdbIntegrationService.getTvByTmdbId(tmdbId);
+
+        Work newWork = new Work();
+
+        newWork.setTmdbId(response.id());
+        newWork.setTitle(response.name());
+        newWork.setSynopsis(response.overview());
+        newWork.setType(WorkType.series);
+        newWork.setReleaseDate(LocalDate.parse(response.releaseDate()));
+
+        List<Integer> genreIds = response.genres()
+                .stream()
+                .map(TmdbGenre::id)
+                .toList();
+
+        newWork.setGenreIds(genreIds);
+
+        workRepository.save(newWork);
+
+        return newWork;
+    }
+
+    private Work createMovieFromTmdbId(Integer tmdbId) {
         TmdbMovieResponse response = tmdbIntegrationService.getMovieByTmdbId(tmdbId);
 
         Work newWork = new Work();
