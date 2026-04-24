@@ -1,6 +1,7 @@
 package com.example.api_ecw.works;
 
-import com.example.api_ecw.works.dto.TmdbSearchResponse;
+import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
+import com.example.api_ecw.tmdb_api.dto.TmdbSearchResponse;
 import com.example.api_ecw.works.dto.WorkRequest;
 import com.example.api_ecw.works.dto.WorkResponse;
 import jakarta.validation.Valid;

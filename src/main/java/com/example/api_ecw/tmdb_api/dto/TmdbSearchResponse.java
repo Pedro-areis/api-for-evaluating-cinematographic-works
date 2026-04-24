@@ -1,4 +1,4 @@
-package com.example.api_ecw.works.dto;
+package com.example.api_ecw.tmdb_api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,8 +1,7 @@
-package com.example.api_ecw.works;
+package com.example.api_ecw.tmdb_api;
 
-import com.example.api_ecw.works.dto.TmdbMovieResponse;
-import com.example.api_ecw.works.dto.TmdbSearchResponse;
-import com.example.api_ecw.works.dto.TmdbWorkResponse;
+import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
+import com.example.api_ecw.tmdb_api.dto.TmdbSearchResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;

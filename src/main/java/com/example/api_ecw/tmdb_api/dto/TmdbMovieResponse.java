@@ -1,7 +1,5 @@
-package com.example.api_ecw.works.dto;
+package com.example.api_ecw.tmdb_api.dto;
 
-import com.example.api_ecw.watchlist.dto.TmdbGenre;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
