@@ -31,7 +31,7 @@ public class Work {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, columnDefinition = "text")
     private String synopsis;
 
     private Float score;
