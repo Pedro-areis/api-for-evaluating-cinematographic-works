@@ -8,9 +8,11 @@ import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
 import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
+import com.example.api_ecw.watchlist.dto.WatchlistUpdated;
 import com.example.api_ecw.works.Work;
 import com.example.api_ecw.works.WorkRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -167,4 +169,29 @@ public class WatchlistService {
         );
     }
 
+    public WatchlistUpdated updateStatusForWatched(UUID userId, UUID workId) {
+
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException("Work not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Watchlist watchlist = watchlistRepository.findByUserIdAndWorkId(user.getId(), work.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Watchlist not found"));
+
+        if (watchlist.getStatus() == WorkStatus.watched) {
+            throw new DataIntegrityViolationException("Work already watched");
+        }
+        watchlist.setStatus(WorkStatus.watched);
+
+        watchlistRepository.save(watchlist);
+
+        return new WatchlistUpdated(
+                watchlist.getWork().getId(),
+                watchlist.getName(),
+                watchlist.getType(),
+                watchlist.getStatus()
+        );
+    }
 }

@@ -2,6 +2,7 @@ package com.example.api_ecw.watchlist;
 
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
+import com.example.api_ecw.watchlist.dto.WatchlistUpdated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/watchlist")
@@ -43,6 +45,16 @@ public class WatchlistController {
         List<WatchlistResponse> watchlist = watchlistService.getAllWorksFromWatchlist(loggedUser.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(watchlist);
+    }
+
+    @PatchMapping("update-status-from/{workId}")
+    public ResponseEntity<WatchlistUpdated> updateStatusForWatched(
+            @AuthenticationPrincipal User loggedUser,
+            @PathVariable UUID workId
+    ) {
+       WatchlistUpdated response = watchlistService.updateStatusForWatched(loggedUser.getId(), workId);
+
+       return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
