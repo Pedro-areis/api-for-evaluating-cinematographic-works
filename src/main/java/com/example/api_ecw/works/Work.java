@@ -6,9 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,20 +31,26 @@ public class Work {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, columnDefinition = "text")
     private String synopsis;
 
     private Float score;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private WorkType type;
 
     @Column(name = "release_date", nullable = false)
     private LocalDate releaseDate;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "genre_ids", columnDefinition = "integer[]", nullable = false)
+    private List<Integer> genreIds;
+
+    @Column(name = "tmdb_id", nullable = false)
+    private Integer tmdbId;
 }

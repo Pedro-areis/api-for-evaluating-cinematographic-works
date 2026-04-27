@@ -19,4 +19,8 @@ spring.flyway.plugin-register.database-type-ignore-categories=true
 
 # Chave Secreta para criação e validação de Token com JWT
 api_ecw.token.secret="sua_chave_ultra_mega_secreta"
+
+# Configuração da API TMDb
+tmdb.api.url=https://api.themoviedb.org/3
+tmdb.api.token=SEU_TOKEN_DE_LEITURA_AQUI
 ```

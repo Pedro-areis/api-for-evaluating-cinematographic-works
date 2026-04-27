@@ -1,0 +1,1 @@
+ALTER TABLE works ALTER COLUMN synopsis TYPE TEXT;
