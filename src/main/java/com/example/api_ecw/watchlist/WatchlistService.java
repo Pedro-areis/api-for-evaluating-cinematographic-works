@@ -6,6 +6,7 @@ import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
+import com.example.api_ecw.watchlist.dto.RemoveWorkFromWatchlist;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
 import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
 import com.example.api_ecw.watchlist.dto.WatchlistUpdated;
@@ -194,4 +195,27 @@ public class WatchlistService {
                 watchlist.getStatus()
         );
     }
+
+    public RemoveWorkFromWatchlist removeWork(UUID userId, UUID workId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException("Work not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Watchlist watchlist = watchlistRepository.findByUserIdAndWorkId(user.getId(), work.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Watchlist not found"));
+
+        RemoveWorkFromWatchlist response = new RemoveWorkFromWatchlist(
+                watchlist.getWork().getId(),
+                watchlist.getName(),
+                watchlist.getType(),
+                "Work removed from watchlist"
+        );
+
+        watchlistRepository.delete(watchlist);
+
+        return response;
+    }
+
 }

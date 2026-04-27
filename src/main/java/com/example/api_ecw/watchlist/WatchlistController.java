@@ -1,6 +1,7 @@
 package com.example.api_ecw.watchlist;
 
 import com.example.api_ecw.user.User;
+import com.example.api_ecw.watchlist.dto.RemoveWorkFromWatchlist;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
 import com.example.api_ecw.watchlist.dto.WatchlistUpdated;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,16 @@ public class WatchlistController {
        WatchlistUpdated response = watchlistService.updateStatusForWatched(loggedUser.getId(), workId);
 
        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("delete-from-watchlist/{workId}")
+    public ResponseEntity<RemoveWorkFromWatchlist> deleteWorkFromWatchlist(
+            @AuthenticationPrincipal User loggedUser,
+            @PathVariable UUID workId
+    ) {
+        RemoveWorkFromWatchlist response = watchlistService.removeWork(loggedUser.getId(), workId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
