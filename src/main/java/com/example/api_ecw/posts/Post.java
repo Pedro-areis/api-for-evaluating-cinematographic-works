@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -35,9 +36,10 @@ public class Post {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Work work;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false)
     private String content;
 
+    @CreationTimestamp
     @Column(name = "post_date", nullable = false, updatable = false)
     private LocalDateTime postDate;
 }
