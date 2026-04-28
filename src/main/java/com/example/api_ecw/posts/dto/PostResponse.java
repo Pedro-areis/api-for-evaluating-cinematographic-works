@@ -1,7 +1,6 @@
 package com.example.api_ecw.posts.dto;
 
 import com.example.api_ecw.enums.WorkType;
-import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ public record PostResponse(
         String authorName,
         String workTitle,
         String overview,
-        List<Integer> genres,
+        List<String> genres,
         WorkType workType,
         LocalDate releaseDate,
         String content,

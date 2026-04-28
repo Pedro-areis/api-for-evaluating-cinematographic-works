@@ -3,6 +3,7 @@ package com.example.api_ecw.posts;
 import com.example.api_ecw.enums.WorkType;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
+import com.example.api_ecw.tmdb_api.GenreCacheService;
 import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
 import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final WorkRepository workRepository;
     private final WatchlistService watchlistService;
+    private final GenreCacheService genreCacheService;
 
     @Transactional
     public PostResponse createPostFromMovie(PostRequest request, UUID userId, Integer tmdbId) {
@@ -45,12 +48,16 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
+        List<String> genres = work.getGenreIds().stream()
+                .map(genreCacheService::getMovieGenreNameById)
+                .collect(Collectors.toList());
+
         return new PostResponse(
                 savedPost.getId(),
                 user.getName(),
                 work.getTitle(),
                 work.getSynopsis(),
-                work.getGenreIds(),
+                genres,
                 work.getType(),
                 work.getReleaseDate(),
                 savedPost.getContent(),
@@ -75,12 +82,16 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
+        List<String> genres = work.getGenreIds().stream()
+                .map(genreCacheService::getTvGenreNameById)
+                .collect(Collectors.toList());
+
         return new PostResponse(
                 savedPost.getId(),
                 user.getName(),
                 work.getTitle(),
                 work.getSynopsis(),
-                work.getGenreIds(),
+                genres,
                 work.getType(),
                 work.getReleaseDate(),
                 savedPost.getContent(),
