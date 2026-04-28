@@ -13,6 +13,7 @@ import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.watchlist.WatchlistService;
 import com.example.api_ecw.works.Work;
 import com.example.api_ecw.works.WorkRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class PostService {
     @Transactional
     public PostResponse createPostFromMovie(PostRequest request, UUID userId, Integer tmdbId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Work work = workRepository.findByTmdbId(tmdbId)
                 .orElseGet(() -> watchlistService.createMovieFromTmdbId(tmdbId));
@@ -65,11 +66,10 @@ public class PostService {
         );
     }
 
-
     @Transactional
     public PostResponse createPostFromTv(PostRequest request, UUID userId, Integer tmdbId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Work work = workRepository.findByTmdbId(tmdbId)
                 .orElseGet(() -> watchlistService.createTvFromTmdbId(tmdbId));
@@ -99,4 +99,31 @@ public class PostService {
         );
     }
 
+    public List<PostResponse> getAllPostsFromWork (UUID workId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException("Work not found"));
+        List<Post> posts = postRepository.findAllByWorkId(work.getId());
+
+        return posts.stream()
+                .map(this::convertPostToPostResponse)
+                .collect(Collectors.toList());
+    }
+
+    private PostResponse convertPostToPostResponse(Post post) {
+        List<String> genres = post.getWork().getGenreIds().stream()
+                .map(genreCacheService::getMovieGenreNameById)
+                .collect(Collectors.toList());
+
+        return new PostResponse(
+                post.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getWork().getSynopsis(),
+                genres,
+                post.getWork().getType(),
+                post.getWork().getReleaseDate(),
+                post.getContent(),
+                post.getPostDate()
+        );
+    }
 }

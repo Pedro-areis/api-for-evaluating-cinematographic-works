@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -31,4 +34,11 @@ public class PostController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("all-posts-from-work/{workId}")
+    public ResponseEntity<List<PostResponse>> getAllPostsFromWork(@PathVariable UUID workId) {
+        List<PostResponse> posts = postService.getAllPostsFromWork(workId);
+        return ResponseEntity.ok(posts);
+    }
+
 }
