@@ -132,7 +132,7 @@ class UserControllerTest {
             when(userService.updateUser(userId, userUpdate)).thenReturn(userResponse);
 
             // Act & Assert
-            mockMvc.perform(patch("/api/users/update/{id}", userId)
+            mockMvc.perform(patch("/api/users/update-me", userId)
                         .with(csrf())
                         .with(authentication(authToken))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,18 +145,9 @@ class UserControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 401 when user id different of id logged")
-        void shouldReturn401_WhenUserIdDifferentOfIdLogged() throws Exception {
+        @DisplayName("Should return 401 when updating without authentication")
+        void shouldReturn401_WhenUpdatingWithoutAuthentication() throws Exception {
             // Arrange
-            UUID loggedId = UUID.randomUUID();
-            User user = new User();
-            user.setId(loggedId);
-
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(user, null, List.of());
-
-            UUID otherId = UUID.randomUUID();
-
             UserUpdate userUpdate = new UserUpdate(
                     null,
                     "email",
@@ -165,9 +156,8 @@ class UserControllerTest {
             );
 
             // Act & Assert
-            mockMvc.perform(patch("/api/users/update/{id}", otherId)
+            mockMvc.perform(patch("/api/users/update-me")
                         .with(csrf())
-                        .with(authentication(authToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdate)))
                     .andExpect(status().isUnauthorized());
@@ -192,7 +182,7 @@ class UserControllerTest {
             when(userService.deleteUser(userId)).thenReturn("User deleted successfully");
 
             // Act & Assert
-            mockMvc.perform(delete("/api/users/delete/{id}", userId)
+            mockMvc.perform(delete("/api/users/delete-me", userId)
                         .with(csrf())
                         .with(authentication(authToken)))
                     .andExpect(status().isOk());
@@ -214,31 +204,18 @@ class UserControllerTest {
                     .when(userService).deleteUser(userId);
 
             // Act & Assert
-            mockMvc.perform(delete("/api/users/delete/{id}", userId)
+            mockMvc.perform(delete("/api/users/delete-me", userId)
                         .with(csrf())
                         .with(authentication(authToken)))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("Should return 401 when user id different of id logged")
-        void shouldReturn401_WhenUserIdDifferentOfIdLogged() throws Exception {
-            // Arrange
-            UUID loggedId = UUID.randomUUID();
-            UUID otherId = UUID.randomUUID();
-
-            User user = new User();
-            user.setId(loggedId);
-
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(user, null, List.of());
-
-            when(userService.deleteUser(otherId)).thenThrow(new RuntimeException());
-
+        @DisplayName("Should return 401 when trying to delete me without authentication")
+        void shouldReturn401_WhenTryingToDeleteMeWithoutAuthentication() throws Exception {
             // Act & Assert
-            mockMvc.perform(delete("/api/users/delete/{id}", otherId)
-                        .with(csrf())
-                        .with(authentication(authToken)))
+            mockMvc.perform(delete("/api/users/delete-me")
+                        .with(csrf()))
                     .andExpect(status().isUnauthorized());
         }
     }
