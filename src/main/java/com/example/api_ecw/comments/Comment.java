@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "coments")
+@Table(name = "comments")
 
 @Getter
 @Setter
@@ -39,5 +40,6 @@ public class Comment {
     private String content;
 
     @Column(name = "coment_date", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime commentDate;
 }

@@ -1,0 +1,31 @@
+package com.example.api_ecw.comments;
+
+import com.example.api_ecw.comments.dto.CommentRequest;
+import com.example.api_ecw.comments.dto.CommentResponse;
+import com.example.api_ecw.user.User;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/comments")
+@RequiredArgsConstructor
+public class CommentController {
+    private final CommentService commentService;
+
+    @PostMapping("/{postId}/make")
+    public ResponseEntity<CommentResponse> makeComment (
+            @PathVariable UUID postId,
+            @AuthenticationPrincipal User loggedUser,
+            @Valid @RequestBody CommentRequest request
+    ) {
+        CommentResponse response = commentService.makeComment(request, postId, loggedUser.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+}
