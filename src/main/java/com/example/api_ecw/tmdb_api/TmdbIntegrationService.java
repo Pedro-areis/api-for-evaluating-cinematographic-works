@@ -1,11 +1,12 @@
 package com.example.api_ecw.tmdb_api;
 
-import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
-import com.example.api_ecw.tmdb_api.dto.TmdbSearchResponse;
-import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
+import com.example.api_ecw.tmdb_api.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 @Service
 
@@ -43,5 +44,19 @@ public class TmdbIntegrationService {
                 .uri("/tv/{tmdbId}?language=pt-BR&api_key={apiKey}", tmdbId, apiKey)
                 .retrieve()
                 .body(TmdbTvResponse.class);
+    }
+
+    public TmdbResponseGenre getAllMoviesGenre() {
+        return restClient.get()
+                .uri("/genre/movie/list?language=pt-BR&api_key={apiKey}", apiKey)
+                .retrieve()
+                .body(TmdbResponseGenre.class);
+    }
+
+    public TmdbResponseGenre getAllTvGenre() {
+        return restClient.get()
+                .uri("/genre/tv/list?language=pt-BR&api_key={apiKey}", apiKey)
+                .retrieve()
+                .body(TmdbResponseGenre.class);
     }
 }

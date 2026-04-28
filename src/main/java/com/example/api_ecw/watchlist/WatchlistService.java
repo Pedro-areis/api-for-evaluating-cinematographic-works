@@ -101,7 +101,7 @@ public class WatchlistService {
         );
     }
 
-    private Work createTvFromTmdbId(Integer tmdbId) {
+    public Work createTvFromTmdbId(Integer tmdbId) {
         TmdbTvResponse response = tmdbIntegrationService.getTvByTmdbId(tmdbId);
 
         Work newWork = new Work();
@@ -124,7 +124,7 @@ public class WatchlistService {
         return newWork;
     }
 
-    private Work createMovieFromTmdbId(Integer tmdbId) {
+    public Work createMovieFromTmdbId(Integer tmdbId) {
         TmdbMovieResponse response = tmdbIntegrationService.getMovieByTmdbId(tmdbId);
 
         Work newWork = new Work();

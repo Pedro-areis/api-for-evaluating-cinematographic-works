@@ -31,32 +31,21 @@ public class UserController {
     }
 
     // Update an existing User
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/update-me")
     public  ResponseEntity<UserResponse> updateUser(
-            @PathVariable UUID id,
             @Valid @RequestBody UserUpdate updated,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User loggedUser
     ){
-        if (!user.getId().equals(id)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        UserResponse response = userService.updateUser(id, updated);
+        UserResponse response = userService.updateUser(loggedUser.getId(), updated);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // Delete an existing User
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete-me")
     public ResponseEntity<String> deleteUser(
-            @PathVariable UUID id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User loggedUser
     ){
-
-        if (user.getId().equals(id)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        String message = userService.deleteUser(id);
+        String message = userService.deleteUser(loggedUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 }
