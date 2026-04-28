@@ -52,7 +52,7 @@ public class UserController {
             @AuthenticationPrincipal User user
     ){
 
-        if (user.getId().equals(id)){
+        if (!user.getId().equals(id)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
