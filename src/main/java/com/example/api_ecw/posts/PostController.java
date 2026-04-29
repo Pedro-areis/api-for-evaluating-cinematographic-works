@@ -1,6 +1,7 @@
 package com.example.api_ecw.posts;
 
 import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.posts.dto.EditPostRequest;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
 import com.example.api_ecw.user.User;
@@ -35,10 +36,19 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("all-posts-from-work/{workId}")
+    @GetMapping("/all-posts-from-work/{workId}")
     public ResponseEntity<List<PostResponse>> getAllPostsFromWork(@PathVariable UUID workId) {
         List<PostResponse> posts = postService.getAllPostsFromWork(workId);
         return ResponseEntity.ok(posts);
     }
 
+    @PatchMapping("/edit-post/{postId}")
+    public ResponseEntity<PostResponse> editPost(
+            @PathVariable UUID postId,
+            @RequestBody @Valid EditPostRequest request,
+            @AuthenticationPrincipal User loggedUser
+    ) {
+        PostResponse response = postService.editPost(request, loggedUser.getId(), postId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
