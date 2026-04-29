@@ -1,6 +1,7 @@
 package com.example.api_ecw.posts;
 
 import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.posts.dto.DeletePostResponse;
 import com.example.api_ecw.posts.dto.EditPostRequest;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
@@ -49,6 +50,15 @@ public class PostController {
             @AuthenticationPrincipal User loggedUser
     ) {
         PostResponse response = postService.editPost(request, loggedUser.getId(), postId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/delete-post/{postId}")
+    public ResponseEntity<DeletePostResponse> deletePost(
+            @PathVariable UUID postId,
+            @AuthenticationPrincipal User loggedUser
+    ) {
+        DeletePostResponse response = postService.deletePost(postId, loggedUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

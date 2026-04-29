@@ -1,5 +1,6 @@
 package com.example.api_ecw.posts;
 
+import com.example.api_ecw.posts.dto.DeletePostResponse;
 import com.example.api_ecw.posts.dto.EditPostRequest;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
@@ -12,6 +13,7 @@ import com.example.api_ecw.works.WorkRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -128,9 +130,6 @@ public class PostService {
         Post post = postRepository.findByIdAndUserId(postId, userId)
                         .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
         post.setContent(request.content());
 
         Post savedPost = postRepository.save(post);
@@ -142,7 +141,7 @@ public class PostService {
 
         return new PostResponse(
                 savedPost.getId(),
-                user.getName(),
+                post.getUser().getName(),
                 post.getWork().getTitle(),
                 post.getWork().getSynopsis(),
                 genres,
@@ -151,5 +150,22 @@ public class PostService {
                 savedPost.getContent(),
                 LocalDateTime.now()
         );
+    }
+
+    public DeletePostResponse deletePost(UUID postId, UUID userId) {
+        Post post = postRepository.findByIdAndUserId(postId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        DeletePostResponse response = new DeletePostResponse(
+                post.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getContent(),
+                "Post deleted successfully"
+        );
+
+        postRepository.delete(post);
+
+        return response;
     }
 }
