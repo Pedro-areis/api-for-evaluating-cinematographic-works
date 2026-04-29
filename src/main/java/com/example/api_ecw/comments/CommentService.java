@@ -1,9 +1,6 @@
 package com.example.api_ecw.comments;
 
-import com.example.api_ecw.comments.dto.CommentRequest;
-import com.example.api_ecw.comments.dto.CommentResponse;
-import com.example.api_ecw.comments.dto.RepliesDTO;
-import com.example.api_ecw.comments.dto.ThreadResponse;
+import com.example.api_ecw.comments.dto.*;
 import com.example.api_ecw.posts.Post;
 import com.example.api_ecw.posts.PostRepository;
 import com.example.api_ecw.user.User;
@@ -11,7 +8,6 @@ import com.example.api_ecw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -102,5 +98,25 @@ public class CommentService {
                 reply.getUser().getName(),
                 reply.getContent()
         );
+    }
+
+    public AllCommentsFromPost getAllComments (UUID postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
+
+        List<RepliesDTO> repliesDTO = comments.stream()
+                .map(this::convertCommentToThreadResponse)
+                .toList();
+
+        return new AllCommentsFromPost(
+                post.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getContent(),
+                repliesDTO
+        );
+
     }
 }

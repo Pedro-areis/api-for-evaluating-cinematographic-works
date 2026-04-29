@@ -1,5 +1,6 @@
 package com.example.api_ecw.comments;
 
+import com.example.api_ecw.comments.dto.AllCommentsFromPost;
 import com.example.api_ecw.comments.dto.CommentRequest;
 import com.example.api_ecw.comments.dto.CommentResponse;
 import com.example.api_ecw.comments.dto.ThreadResponse;
@@ -46,6 +47,15 @@ public class CommentController {
             @PathVariable UUID commentId
     ) {
         ThreadResponse response = commentService.getAllThreadsFromComment(commentId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("comments-from-post/{postId}")
+    public ResponseEntity<AllCommentsFromPost> getCommentsFromPost (
+            @PathVariable UUID postId
+    ) {
+        AllCommentsFromPost response = commentService.getAllComments(postId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
