@@ -1,7 +1,6 @@
 package com.example.api_ecw.comments;
 
-import com.example.api_ecw.comments.dto.CommentRequest;
-import com.example.api_ecw.comments.dto.CommentResponse;
+import com.example.api_ecw.comments.dto.*;
 import com.example.api_ecw.posts.Post;
 import com.example.api_ecw.posts.PostRepository;
 import com.example.api_ecw.user.User;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -71,5 +71,52 @@ public class CommentService {
                 comment.getContent(),
                 LocalDateTime.now()
         );
+    }
+    
+    public ThreadResponse getAllThreadsFromComment(UUID commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        List<Comment> replies = commentRepository.findByParentComment(comment);
+
+        List<RepliesDTO> repliesDTO = replies.stream()
+                .map(this::convertCommentToThreadResponse)
+                .toList();
+
+        return new ThreadResponse (
+                comment.getId(),
+                comment.getPost().getWork().getTitle(),
+                comment.getUser().getName(),
+                comment.getContent(),
+                repliesDTO
+        );
+    }
+
+    private RepliesDTO convertCommentToThreadResponse (Comment reply) {
+        return new RepliesDTO (
+                reply.getId(),
+                reply.getUser().getName(),
+                reply.getContent()
+        );
+    }
+
+    public AllCommentsFromPost getAllComments (UUID postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
+
+        List<RepliesDTO> repliesDTO = comments.stream()
+                .map(this::convertCommentToThreadResponse)
+                .toList();
+
+        return new AllCommentsFromPost(
+                post.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getContent(),
+                repliesDTO
+        );
+
     }
 }

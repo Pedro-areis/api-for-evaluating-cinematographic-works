@@ -1,7 +1,9 @@
 package com.example.api_ecw.comments;
 
+import com.example.api_ecw.comments.dto.AllCommentsFromPost;
 import com.example.api_ecw.comments.dto.CommentRequest;
 import com.example.api_ecw.comments.dto.CommentResponse;
+import com.example.api_ecw.comments.dto.ThreadResponse;
 import com.example.api_ecw.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +40,23 @@ public class CommentController {
         CommentResponse response = commentService.makeThread(request, commentId, loggedUser.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("thread/{commentId}")
+    public ResponseEntity<ThreadResponse> getThread (
+            @PathVariable UUID commentId
+    ) {
+        ThreadResponse response = commentService.getAllThreadsFromComment(commentId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("comments-from-post/{postId}")
+    public ResponseEntity<AllCommentsFromPost> getCommentsFromPost (
+            @PathVariable UUID postId
+    ) {
+        AllCommentsFromPost response = commentService.getAllComments(postId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

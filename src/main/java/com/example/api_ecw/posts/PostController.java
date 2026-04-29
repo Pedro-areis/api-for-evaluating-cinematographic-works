@@ -61,4 +61,12 @@ public class PostController {
         DeletePostResponse response = postService.deletePost(postId, loggedUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/all-my-posts")
+    public ResponseEntity<List<PostResponse>> getAllMyPosts(
+            @AuthenticationPrincipal User loggedUser
+    ) {
+        List<PostResponse> posts = postService.getAllPostsFromUser(loggedUser.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
 }

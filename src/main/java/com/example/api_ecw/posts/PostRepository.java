@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findAllByWorkId(UUID workId);
     Optional<Post> findByIdAndUserId(UUID postId, UUID authorId);
+    List<Post> findAllByUserId(UUID userId);
 }
