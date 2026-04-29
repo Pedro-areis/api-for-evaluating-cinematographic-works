@@ -1,13 +1,10 @@
 package com.example.api_ecw.posts;
 
-import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.posts.dto.DeletePostResponse;
+import com.example.api_ecw.posts.dto.EditPostRequest;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
 import com.example.api_ecw.tmdb_api.GenreCacheService;
-import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
-import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
-import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
-import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.watchlist.WatchlistService;
@@ -16,9 +13,9 @@ import com.example.api_ecw.works.WorkRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -125,5 +122,50 @@ public class PostService {
                 post.getContent(),
                 post.getPostDate()
         );
+    }
+
+    public PostResponse editPost(EditPostRequest request, UUID userId,
+                                 UUID postId) {
+
+        Post post = postRepository.findByIdAndUserId(postId, userId)
+                        .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        post.setContent(request.content());
+
+        Post savedPost = postRepository.save(post);
+
+        List<String> genres = post.getWork().getGenreIds().stream()
+                .map(genreCacheService::getTvGenreNameById)
+                .collect(Collectors.toList());
+
+
+        return new PostResponse(
+                savedPost.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getWork().getSynopsis(),
+                genres,
+                post.getWork().getType(),
+                post.getWork().getReleaseDate(),
+                savedPost.getContent(),
+                LocalDateTime.now()
+        );
+    }
+
+    public DeletePostResponse deletePost(UUID postId, UUID userId) {
+        Post post = postRepository.findByIdAndUserId(postId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        DeletePostResponse response = new DeletePostResponse(
+                post.getId(),
+                post.getUser().getName(),
+                post.getWork().getTitle(),
+                post.getContent(),
+                "Post deleted successfully"
+        );
+
+        postRepository.delete(post);
+
+        return response;
     }
 }
