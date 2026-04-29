@@ -40,8 +40,35 @@ public class CommentService {
         return new CommentResponse(
                 savedComment.getId(),
                 user.getName(),
-                workName,
+                savedComment.getContent(),
+                post.getWork().getTitle(),
                 post.getContent(),
+                LocalDateTime.now()
+        );
+    }
+
+    public CommentResponse makeThread(CommentRequest request, UUID commentId, UUID userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Comment reply = new Comment();
+
+        reply.setUser(user);
+        reply.setPost(comment.getPost());
+        reply.setContent(request.content());
+        reply.setParentComment(comment);
+
+        Comment savedComment = commentRepository.save(reply);
+
+        return new CommentResponse(
+                savedComment.getId(),
+                user.getName(),
+                savedComment.getContent(),
+                comment.getPost().getWork().getTitle(),
+                comment.getContent(),
                 LocalDateTime.now()
         );
     }

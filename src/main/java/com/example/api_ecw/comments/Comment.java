@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,7 +40,12 @@ public class Comment {
     @Column(nullable = false, length = 200)
     private String content;
 
-    @Column(name = "coment_date", nullable = false, updatable = false)
+    @Column(name = "comment_date", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime commentDate;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Comment parentComment;
 }

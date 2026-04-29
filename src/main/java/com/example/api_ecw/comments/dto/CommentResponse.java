@@ -6,6 +6,7 @@ import java.util.UUID;
 public record CommentResponse (
         UUID id,
         String authorName,
+        String content,
         String workName,
         String contentPost,
         LocalDateTime commentDate

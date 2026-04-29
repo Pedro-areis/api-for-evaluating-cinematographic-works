@@ -28,4 +28,15 @@ public class CommentController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping("/make-thread/{commentId}")
+    public ResponseEntity<CommentResponse> makeThread (
+          @PathVariable UUID commentId,
+          @AuthenticationPrincipal User loggedUser,
+          @Valid @RequestBody CommentRequest request
+    ) {
+        CommentResponse response = commentService.makeThread(request, commentId, loggedUser.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
