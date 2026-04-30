@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public record WatchlistUpdated(
         UUID workId,
-        String name,
+        String workName,
+        Float workScore,
         WorkType type,
         WorkStatus status
-) {
-}
+) {}
