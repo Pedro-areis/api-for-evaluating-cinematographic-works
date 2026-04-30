@@ -114,6 +114,7 @@ public class WatchlistService {
         newWork.setTmdbId(response.id());
         newWork.setTitle(response.name());
         newWork.setSynopsis(response.overview());
+        newWork.setScore(0.0f);
         newWork.setType(WorkType.series);
         newWork.setReleaseDate(LocalDate.parse(response.releaseDate()));
 
