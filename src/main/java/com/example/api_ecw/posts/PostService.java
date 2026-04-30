@@ -179,4 +179,11 @@ public class PostService {
                 .map(this::convertPostToPostResponse)
                 .collect(Collectors.toList());
     }
+
+    public List<PostResponse> getTimeline () {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(this::convertPostToPostResponse)
+                .collect(Collectors.toList());
+    }
 }

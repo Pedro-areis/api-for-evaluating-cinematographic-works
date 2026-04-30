@@ -69,4 +69,10 @@ public class PostController {
         List<PostResponse> posts = postService.getAllPostsFromUser(loggedUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
+
+    @GetMapping("/timeline")
+    public ResponseEntity<List<PostResponse>> getTimeline() {
+        List<PostResponse> posts = postService.getTimeline();
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
 }

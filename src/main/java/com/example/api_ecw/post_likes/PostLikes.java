@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -39,6 +40,7 @@ public class PostLikes {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
+    @CreationTimestamp
     @Column(name = "like_date", nullable = false, updatable = false)
     private LocalDateTime likeDate;
 }
