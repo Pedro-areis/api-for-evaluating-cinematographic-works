@@ -2,6 +2,8 @@ package com.example.api_ecw.watchlist;
 
 import com.example.api_ecw.enums.WorkStatus;
 import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.scores.Score;
+import com.example.api_ecw.scores.ScoreRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
@@ -19,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +34,7 @@ public class WatchlistService {
     private final WorkRepository workRepository;
     private final UserRepository userRepository;
     private final TmdbIntegrationService tmdbIntegrationService;
+    private final ScoreRepository scoreRepository;
 
     @Transactional
     public WatchlistResponse addMovieToWatchlist(UUID userId, Integer tmdbId) {
@@ -61,7 +66,7 @@ public class WatchlistService {
                 savedWatchlist.getName(),
                 savedWatchlist.getType(),
                 savedWatchlist.getStatus(),
-                savedWatchlist.getCreatedAt()
+                LocalDateTime.now()
         );
 
     }
@@ -109,6 +114,7 @@ public class WatchlistService {
         newWork.setTmdbId(response.id());
         newWork.setTitle(response.name());
         newWork.setSynopsis(response.overview());
+        newWork.setScore(0.0f);
         newWork.setType(WorkType.series);
         newWork.setReleaseDate(LocalDate.parse(response.releaseDate()));
 
@@ -132,6 +138,7 @@ public class WatchlistService {
         newWork.setTmdbId(response.id());
         newWork.setTitle(response.title());
         newWork.setSynopsis(response.overview());
+        newWork.setScore(0.0f);
         newWork.setType(WorkType.movie);
         newWork.setReleaseDate(LocalDate.parse(response.releaseDate()));
 
@@ -170,7 +177,7 @@ public class WatchlistService {
         );
     }
 
-    public WatchlistUpdated updateStatusForWatched(UUID userId, UUID workId) {
+    public WatchlistUpdated updateStatusForWatched(BigDecimal score, UUID userId, UUID workId) {
 
         Work work = workRepository.findById(workId)
                 .orElseThrow(() -> new EntityNotFoundException("Work not found"));
@@ -186,11 +193,19 @@ public class WatchlistService {
         }
         watchlist.setStatus(WorkStatus.watched);
 
+        Score newScore = new Score();
+
+        newScore.setWork(work);
+        newScore.setUser(user);
+        newScore.setScore(score);
+
+        scoreRepository.save(newScore);
         watchlistRepository.save(watchlist);
 
         return new WatchlistUpdated(
                 watchlist.getWork().getId(),
                 watchlist.getName(),
+                work.getScore(),
                 watchlist.getType(),
                 watchlist.getStatus()
         );
