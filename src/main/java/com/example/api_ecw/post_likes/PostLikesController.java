@@ -25,7 +25,7 @@ public class PostLikesController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/likes/{postId}")
+    @GetMapping("/all-likes-from-post/{postId}")
     public ResponseEntity<Integer> getAllLikesFromPost(
             @PathVariable UUID postId
     ) {

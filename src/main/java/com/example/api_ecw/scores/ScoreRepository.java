@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ScoreRepository extends JpaRepository<Score, UUID> {
     boolean existsByUserAndWork(User user, Work work);
     Optional<Score> findById(UUID id);
+    Optional<Score> findByUserAndWork(User user, Work work);
 }

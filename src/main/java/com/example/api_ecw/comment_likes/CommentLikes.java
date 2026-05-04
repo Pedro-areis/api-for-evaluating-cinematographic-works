@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "posting_likes",
+@Table(name = "comment_likes",
         uniqueConstraints = {
             @UniqueConstraint(name = "unique_user_comment", columnNames = {"user_id", "comment_id"})
         }
@@ -40,6 +41,7 @@ public class CommentLikes {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment comment;
 
+    @CreationTimestamp
     @Column(name = "like_date", nullable = false, updatable = false)
     private LocalDateTime likeDate;
 }

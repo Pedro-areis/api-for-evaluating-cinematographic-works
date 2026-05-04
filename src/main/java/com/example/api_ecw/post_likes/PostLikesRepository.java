@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface PostLikesRepository extends JpaRepository<PostLikes, UUID> {
     List<PostLikes> findByPost(Post post);
-    boolean existsByUser(User user);
+    boolean existsByUserAndPost(User user, Post post);
 }

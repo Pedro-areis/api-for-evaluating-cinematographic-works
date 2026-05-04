@@ -28,7 +28,7 @@ public class PosLikesService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (postLikesRepository.existsByUser(user)) {
+        if (postLikesRepository.existsByUserAndPost(user, post)) {
             throw new DataIntegrityViolationException("Post already liked by user");
         }
 
