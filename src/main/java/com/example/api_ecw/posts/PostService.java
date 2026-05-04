@@ -4,6 +4,8 @@ import com.example.api_ecw.posts.dto.DeletePostResponse;
 import com.example.api_ecw.posts.dto.EditPostRequest;
 import com.example.api_ecw.posts.dto.PostRequest;
 import com.example.api_ecw.posts.dto.PostResponse;
+import com.example.api_ecw.scores.Score;
+import com.example.api_ecw.scores.ScoreRepository;
 import com.example.api_ecw.tmdb_api.GenreCacheService;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
@@ -14,8 +16,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Delete;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +33,7 @@ public class PostService {
     private final WorkRepository workRepository;
     private final WatchlistService watchlistService;
     private final GenreCacheService genreCacheService;
+    private final ScoreRepository scoreRepository;
 
     @Transactional
     public PostResponse createPostFromMovie(PostRequest request, UUID userId, Integer tmdbId) {
@@ -37,6 +42,17 @@ public class PostService {
 
         Work work = workRepository.findByTmdbId(tmdbId)
                 .orElseGet(() -> watchlistService.createMovieFromTmdbId(tmdbId));
+
+        if (postRepository.existsByUserAndWork(user, work)) {
+            throw new DataIntegrityViolationException("Post already exists of work");
+        }
+
+        Score score = new Score();
+        score.setWork(work);
+        score.setUser(user);
+        score.setScore(request.score());
+
+        scoreRepository.save(score);
 
         Post post = new Post();
 
@@ -55,6 +71,7 @@ public class PostService {
                 user.getName(),
                 work.getTitle(),
                 work.getSynopsis(),
+                work.getScore(),
                 genres,
                 work.getType(),
                 work.getReleaseDate(),
@@ -70,6 +87,17 @@ public class PostService {
 
         Work work = workRepository.findByTmdbId(tmdbId)
                 .orElseGet(() -> watchlistService.createTvFromTmdbId(tmdbId));
+
+        if (postRepository.existsByUserAndWork(user, work)) {
+            throw new DataIntegrityViolationException("Post already exists of work");
+        }
+
+        Score score = new Score();
+        score.setWork(work);
+        score.setUser(user);
+        score.setScore(request.score());
+
+        scoreRepository.save(score);
 
         Post post = new Post();
 
@@ -88,6 +116,7 @@ public class PostService {
                 user.getName(),
                 work.getTitle(),
                 work.getSynopsis(),
+                work.getScore(),
                 genres,
                 work.getType(),
                 work.getReleaseDate(),
@@ -111,11 +140,12 @@ public class PostService {
                 .map(genreCacheService::getMovieGenreNameById)
                 .collect(Collectors.toList());
 
-        return new PostResponse(
+        return new PostResponse (
                 post.getId(),
                 post.getUser().getName(),
                 post.getWork().getTitle(),
                 post.getWork().getSynopsis(),
+                post.getWork().getScore(),
                 genres,
                 post.getWork().getType(),
                 post.getWork().getReleaseDate(),
@@ -129,6 +159,15 @@ public class PostService {
 
         Post post = postRepository.findByIdAndUserId(postId, userId)
                         .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        Score score = scoreRepository.findByUserAndWork(post.getUser(), post.getWork())
+                .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+
+        if (request.score().isPresent()) {
+            BigDecimal newScore = request.score().get();
+            score.setScore(newScore);
+            scoreRepository.save(score);
+        }
 
         post.setContent(request.content());
 
@@ -144,6 +183,7 @@ public class PostService {
                 post.getUser().getName(),
                 post.getWork().getTitle(),
                 post.getWork().getSynopsis(),
+                post.getWork().getScore(),
                 genres,
                 post.getWork().getType(),
                 post.getWork().getReleaseDate(),

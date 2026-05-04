@@ -26,7 +26,7 @@ public class CommentLikesController {
        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/all-likes/{commentId}")
+    @GetMapping("/all-likes-from-comment/{commentId}")
     public ResponseEntity<Integer> getAllLikesFromComment(
             @PathVariable UUID commentId
     ) {
