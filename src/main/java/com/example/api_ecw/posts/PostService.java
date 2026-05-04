@@ -234,4 +234,15 @@ public class PostService {
                 .map(this::convertPostToPostResponse)
                 .collect(Collectors.toList());
     }
+
+    public List<AllPostsResponse> getAllPostsFromAnotherUser (UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<Post> posts = postRepository.findAllByUserId(userId);
+
+        return posts.stream()
+                .map(this::convertPostToPostResponse)
+                .collect(Collectors.toList());
+    }
 }

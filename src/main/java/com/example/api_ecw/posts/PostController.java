@@ -72,4 +72,12 @@ public class PostController {
         List<AllPostsResponse> posts = postService.getTimeline();
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
+
+    @GetMapping("/all-posts-from-user/{userId}")
+    public ResponseEntity<List<AllPostsResponse>> getAllPostsFromUser(
+            @PathVariable UUID userId
+    ) {
+        List<AllPostsResponse> posts = postService.getAllPostsFromAnotherUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
 }
