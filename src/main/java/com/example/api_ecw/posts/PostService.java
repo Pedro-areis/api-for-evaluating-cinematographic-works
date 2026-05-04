@@ -1,9 +1,8 @@
 package com.example.api_ecw.posts;
 
-import com.example.api_ecw.posts.dto.DeletePostResponse;
-import com.example.api_ecw.posts.dto.EditPostRequest;
-import com.example.api_ecw.posts.dto.PostRequest;
-import com.example.api_ecw.posts.dto.PostResponse;
+import com.example.api_ecw.post_likes.PostLikes;
+import com.example.api_ecw.post_likes.PostLikesRepository;
+import com.example.api_ecw.posts.dto.*;
 import com.example.api_ecw.scores.Score;
 import com.example.api_ecw.scores.ScoreRepository;
 import com.example.api_ecw.tmdb_api.GenreCacheService;
@@ -34,6 +33,7 @@ public class PostService {
     private final WatchlistService watchlistService;
     private final GenreCacheService genreCacheService;
     private final ScoreRepository scoreRepository;
+    private final PostLikesRepository postLikesRepository;
 
     @Transactional
     public PostResponse createPostFromMovie(PostRequest request, UUID userId, Integer tmdbId) {
@@ -125,7 +125,7 @@ public class PostService {
         );
     }
 
-    public List<PostResponse> getAllPostsFromWork (UUID workId) {
+    public List<AllPostsResponse> getAllPostsFromWork (UUID workId) {
         Work work = workRepository.findById(workId)
                 .orElseThrow(() -> new EntityNotFoundException("Work not found"));
         List<Post> posts = postRepository.findAllByWorkId(work.getId());
@@ -135,15 +135,16 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    private PostResponse convertPostToPostResponse(Post post) {
+    private AllPostsResponse convertPostToPostResponse(Post post) {
         List<String> genres = post.getWork().getGenreIds().stream()
                 .map(genreCacheService::getMovieGenreNameById)
                 .collect(Collectors.toList());
 
-        return new PostResponse (
+        return new AllPostsResponse (
                 post.getId(),
                 post.getUser().getName(),
                 post.getWork().getTitle(),
+                getLikesFromPost(post.getId()),
                 post.getWork().getSynopsis(),
                 post.getWork().getScore(),
                 genres,
@@ -152,6 +153,13 @@ public class PostService {
                 post.getContent(),
                 post.getPostDate()
         );
+    }
+
+    private Integer getLikesFromPost(UUID postId) {
+        List<PostLikes> likes = postLikesRepository.findByPost(postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found")));
+
+        return likes.size();
     }
 
     public PostResponse editPost(EditPostRequest request, UUID userId,
@@ -209,7 +217,7 @@ public class PostService {
         return response;
     }
 
-    public List<PostResponse> getAllPostsFromUser(UUID userId) {
+    public List<AllPostsResponse> getAllPostsFromUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -220,7 +228,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostResponse> getTimeline () {
+    public List<AllPostsResponse> getTimeline () {
         List<Post> posts = postRepository.findAll();
         return posts.stream()
                 .map(this::convertPostToPostResponse)
