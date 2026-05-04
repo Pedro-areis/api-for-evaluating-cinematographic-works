@@ -1,10 +1,7 @@
 package com.example.api_ecw.posts;
 
 import com.example.api_ecw.enums.WorkType;
-import com.example.api_ecw.posts.dto.DeletePostResponse;
-import com.example.api_ecw.posts.dto.EditPostRequest;
-import com.example.api_ecw.posts.dto.PostRequest;
-import com.example.api_ecw.posts.dto.PostResponse;
+import com.example.api_ecw.posts.dto.*;
 import com.example.api_ecw.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +35,8 @@ public class PostController {
     }
 
     @GetMapping("/all-posts-from-work/{workId}")
-    public ResponseEntity<List<PostResponse>> getAllPostsFromWork(@PathVariable UUID workId) {
-        List<PostResponse> posts = postService.getAllPostsFromWork(workId);
+    public ResponseEntity<List<AllPostsResponse>> getAllPostsFromWork(@PathVariable UUID workId) {
+        List<AllPostsResponse> posts = postService.getAllPostsFromWork(workId);
         return ResponseEntity.ok(posts);
     }
 
@@ -63,16 +60,24 @@ public class PostController {
     }
 
     @GetMapping("/all-my-posts")
-    public ResponseEntity<List<PostResponse>> getAllMyPosts(
+    public ResponseEntity<List<AllPostsResponse>> getAllMyPosts(
             @AuthenticationPrincipal User loggedUser
     ) {
-        List<PostResponse> posts = postService.getAllPostsFromUser(loggedUser.getId());
+        List<AllPostsResponse> posts = postService.getAllPostsFromUser(loggedUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
     @GetMapping("/timeline")
-    public ResponseEntity<List<PostResponse>> getTimeline() {
-        List<PostResponse> posts = postService.getTimeline();
+    public ResponseEntity<List<AllPostsResponse>> getTimeline() {
+        List<AllPostsResponse> posts = postService.getTimeline();
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
+
+    @GetMapping("/all-posts-from-user/{userId}")
+    public ResponseEntity<List<AllPostsResponse>> getAllPostsFromUser(
+            @PathVariable UUID userId
+    ) {
+        List<AllPostsResponse> posts = postService.getAllPostsFromAnotherUser(userId);
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 }
