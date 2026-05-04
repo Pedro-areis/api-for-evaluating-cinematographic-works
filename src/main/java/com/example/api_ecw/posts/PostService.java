@@ -155,7 +155,7 @@ public class PostService {
         );
     }
 
-    private Integer getLikesFromPost(UUID postId) {
+    public Integer getLikesFromPost(UUID postId) {
         List<PostLikes> likes = postLikesRepository.findByPost(postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found")));
 
