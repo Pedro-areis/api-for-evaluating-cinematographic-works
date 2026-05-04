@@ -1,6 +1,7 @@
 package com.example.api_ecw.scores;
 
 import com.example.api_ecw.enums.WorkType;
+import com.example.api_ecw.scores.dto.EditScoreRequest;
 import com.example.api_ecw.scores.dto.ScoreRequest;
 import com.example.api_ecw.scores.dto.ScoreResponse;
 import com.example.api_ecw.user.User;
@@ -55,6 +56,25 @@ public class ScoreService {
                 user.getName(),
                 savedScore.getScore()
         );
+    }
 
+    public ScoreResponse editScore(EditScoreRequest request, UUID workId, UUID userId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException("Work not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Score score = scoreRepository.findByUserAndWork(user, work)
+                .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+
+        score.setScore(request.score());
+        scoreRepository.save(score);
+
+        return new ScoreResponse(
+                work.getTitle(),
+                user.getName(),
+                score.getScore()
+        );
     }
 }
