@@ -239,7 +239,7 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        List<Post> posts = postRepository.findAllByUserId(userId);
+        List<Post> posts = postRepository.findAllByUserId(user.getId());
 
         return posts.stream()
                 .map(this::convertPostToPostResponse)
