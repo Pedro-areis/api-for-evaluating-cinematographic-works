@@ -1,15 +1,15 @@
 package com.example.api_ecw.tmdb_api;
 
 import com.example.api_ecw.tmdb_api.dto.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+
 
 @Service
-
 public class TmdbIntegrationService {
     private final RestClient restClient;
     private final String apiKey;
@@ -36,6 +36,9 @@ public class TmdbIntegrationService {
         return restClient.get()
                 .uri("/movie/{tmdbId}?language=pt-BR&api_key={apiKey}", tmdbId, apiKey)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new EntityNotFoundException("Movie not found in TMDB API, with tmdbId: " + tmdbId);
+                })
                 .body(TmdbMovieResponse.class);
     }
 
@@ -43,6 +46,9 @@ public class TmdbIntegrationService {
         return restClient.get()
                 .uri("/tv/{tmdbId}?language=pt-BR&api_key={apiKey}", tmdbId, apiKey)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new EntityNotFoundException("TV not found in TMDB API, with tmdbId: " + tmdbId);
+                })
                 .body(TmdbTvResponse.class);
     }
 
