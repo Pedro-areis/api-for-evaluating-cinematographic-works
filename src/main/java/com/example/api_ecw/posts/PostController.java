@@ -26,10 +26,10 @@ public class PostController {
             @AuthenticationPrincipal User loggedUser
     ) {
         PostResponse response;
-        if (request.type() != WorkType.movie) {
-            response = postService.createPostFromTv(request, loggedUser.getId(), tmdbId);
-        } else {
+        if (request.type() == WorkType.movie) {
             response = postService.createPostFromMovie(request, loggedUser.getId(), tmdbId);
+        } else {
+            response = postService.createPostFromTv(request, loggedUser.getId(), tmdbId);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

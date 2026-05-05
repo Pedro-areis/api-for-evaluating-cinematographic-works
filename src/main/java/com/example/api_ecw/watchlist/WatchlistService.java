@@ -8,6 +8,7 @@ import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
+import com.example.api_ecw.watchlist.dto.AllWatchlistResponse;
 import com.example.api_ecw.watchlist.dto.RemoveWorkFromWatchlist;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
 import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
@@ -45,7 +46,7 @@ public class WatchlistService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        boolean existingWatchlist = watchlistRepository.existsByUserAndWork(user, work);
+        boolean existingWatchlist = watchlistRepository.existsByUserAndWorkAndType(user, work, WorkType.movie);
         if (existingWatchlist) {
             throw new DataIntegrityViolationException("Work already in watchlist");
         }
@@ -80,7 +81,7 @@ public class WatchlistService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        boolean existingWatchlist = watchlistRepository.existsByUserAndWork(user, work);
+        boolean existingWatchlist = watchlistRepository.existsByUserAndWorkAndType(user, work, WorkType.series);
         if (existingWatchlist) {
             throw new DataIntegrityViolationException("Work already in watchlist");
         }
@@ -155,7 +156,7 @@ public class WatchlistService {
         return newWork;
     }
 
-    public List<WatchlistResponse> getAllWorksFromWatchlist(UUID userId) {
+    public List<AllWatchlistResponse> getAllWorksFromWatchlist(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -166,12 +167,13 @@ public class WatchlistService {
                 .toList();
     }
 
-    private WatchlistResponse convertFromDTO(Watchlist watchlist) {
-        return new  WatchlistResponse(
+    private AllWatchlistResponse convertFromDTO(Watchlist watchlist) {
+        return new  AllWatchlistResponse(
                 watchlist.getId(),
                 watchlist.getWork().getId(),
                 watchlist.getUser().getId(),
                 watchlist.getName(),
+                watchlist.getWork().getScore(),
                 watchlist.getType(),
                 watchlist.getStatus(),
                 watchlist.getCreatedAt()

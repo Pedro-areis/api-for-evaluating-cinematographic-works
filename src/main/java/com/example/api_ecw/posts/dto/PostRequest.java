@@ -13,7 +13,6 @@ public record PostRequest(
         @NotBlank(message = "Content cannot be null")
         String content,
 
-        @NotNull(message = "Score is required")
         BigDecimal score,
 
         @Enumerated(EnumType.STRING)
