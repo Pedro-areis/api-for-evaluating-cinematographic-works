@@ -19,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,7 +43,7 @@ public class WatchlistService {
                 .orElseGet(() -> createMovieFromTmdbId(tmdbId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         boolean existingWatchlist = watchlistRepository.existsByUserAndWork(user, work);
         if (existingWatchlist) {
@@ -77,7 +78,7 @@ public class WatchlistService {
                 .orElseGet(() -> createTvFromTmdbId(tmdbId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         boolean existingWatchlist = watchlistRepository.existsByUserAndWork(user, work);
         if (existingWatchlist) {
@@ -156,7 +157,7 @@ public class WatchlistService {
 
     public List<WatchlistResponse> getAllWorksFromWatchlist(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         List<Watchlist> works = watchlistRepository.findAllByUserId(user.getId());
 
@@ -186,7 +187,7 @@ public class WatchlistService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Watchlist watchlist = watchlistRepository.findByUserIdAndWorkId(user.getId(), work.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Watchlist not found"));
+                .orElseThrow(() -> new BadCredentialsException("Watchlist not found or not owned by user"));
 
         if (watchlist.getStatus() == WorkStatus.watched) {
             throw new DataIntegrityViolationException("Work already watched");
@@ -219,7 +220,7 @@ public class WatchlistService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Watchlist watchlist = watchlistRepository.findByUserIdAndWorkId(user.getId(), work.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Watchlist not found"));
+                .orElseThrow(() -> new BadCredentialsException("Watchlist not found or not owned by user"));
 
         RemoveWorkFromWatchlist response = new RemoveWorkFromWatchlist(
                 watchlist.getWork().getId(),

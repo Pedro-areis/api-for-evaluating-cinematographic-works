@@ -40,8 +40,6 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(newComment);
 
-        String workName = post.getWork().getTitle();
-
         return new CommentResponse(
                 savedComment.getId(),
                 user.getName(),

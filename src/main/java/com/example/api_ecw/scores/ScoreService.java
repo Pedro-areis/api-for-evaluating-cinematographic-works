@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -66,7 +67,7 @@ public class ScoreService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Score score = scoreRepository.findByUserAndWork(user, work)
-                .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+                .orElseThrow(() -> new BadCredentialsException("Score not found or not owned by user"));
 
         score.setScore(request.score());
         scoreRepository.save(score);

@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Delete;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -169,7 +170,7 @@ public class PostService {
                         .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         Score score = scoreRepository.findByUserAndWork(post.getUser(), post.getWork())
-                .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+                .orElseThrow(() -> new BadCredentialsException("Score not found or not owned by user"));
 
         if (request.score().isPresent()) {
             BigDecimal newScore = request.score().get();
@@ -202,7 +203,7 @@ public class PostService {
 
     public DeletePostResponse deletePost(UUID postId, UUID userId) {
         Post post = postRepository.findByIdAndUserId(postId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+                .orElseThrow(() -> new BadCredentialsException("Post not found or not owned by user"));
 
         DeletePostResponse response = new DeletePostResponse(
                 post.getId(),
