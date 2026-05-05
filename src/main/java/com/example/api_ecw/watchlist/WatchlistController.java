@@ -1,10 +1,7 @@
 package com.example.api_ecw.watchlist;
 
 import com.example.api_ecw.user.User;
-import com.example.api_ecw.watchlist.dto.RemoveWorkFromWatchlist;
-import com.example.api_ecw.watchlist.dto.WatchlistResponse;
-import com.example.api_ecw.watchlist.dto.WatchlistUpdated;
-import com.example.api_ecw.watchlist.dto.WatchlistUpdatedRequest;
+import com.example.api_ecw.watchlist.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +39,10 @@ public class WatchlistController {
     }
 
     @GetMapping("/my-watchlist")
-    public ResponseEntity<List<WatchlistResponse>> getWatchlist(
+    public ResponseEntity<List<AllWatchlistResponse>> getWatchlist(
             @AuthenticationPrincipal User loggedUser
     ) {
-        List<WatchlistResponse> watchlist = watchlistService.getAllWorksFromWatchlist(loggedUser.getId());
+        List<AllWatchlistResponse> watchlist = watchlistService.getAllWorksFromWatchlist(loggedUser.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(watchlist);
     }
