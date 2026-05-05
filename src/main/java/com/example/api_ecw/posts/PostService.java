@@ -1,5 +1,6 @@
 package com.example.api_ecw.posts;
 
+import com.example.api_ecw.enums.WorkType;
 import com.example.api_ecw.post_likes.PostLikes;
 import com.example.api_ecw.post_likes.PostLikesRepository;
 import com.example.api_ecw.posts.dto.*;
@@ -41,19 +42,28 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Work work = workRepository.findByTmdbId(tmdbId)
+        Work work = workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)
                 .orElseGet(() -> watchlistService.createMovieFromTmdbId(tmdbId));
 
         if (postRepository.existsByUserAndWork(user, work)) {
             throw new DataIntegrityViolationException("Post already exists of work");
         }
 
-        Score score = new Score();
-        score.setWork(work);
-        score.setUser(user);
-        score.setScore(request.score());
+        if (request.score() != null) {
+            if (scoreRepository.existsByUserAndWork(user, work)) {
+                Score score = scoreRepository.findByUserAndWork(user, work)
+                        .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+                score.setScore(request.score());
+                scoreRepository.save(score);
+            } else {
+                Score score = new Score();
 
-        scoreRepository.save(score);
+                score.setWork(work);
+                score.setUser(user);
+                score.setScore(request.score());
+                scoreRepository.save(score);
+            }
+        }
 
         Post post = new Post();
 
@@ -86,19 +96,28 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Work work = workRepository.findByTmdbId(tmdbId)
+        Work work = workRepository.findByTmdbIdAndType(tmdbId, WorkType.series)
                 .orElseGet(() -> watchlistService.createTvFromTmdbId(tmdbId));
 
         if (postRepository.existsByUserAndWork(user, work)) {
             throw new DataIntegrityViolationException("Post already exists of work");
         }
 
-        Score score = new Score();
-        score.setWork(work);
-        score.setUser(user);
-        score.setScore(request.score());
+        if (request.score() != null) {
+            if (scoreRepository.existsByUserAndWork(user, work)) {
+                Score score = scoreRepository.findByUserAndWork(user, work)
+                        .orElseThrow(() -> new EntityNotFoundException("Score not found"));
+                score.setScore(request.score());
+                scoreRepository.save(score);
+            } else {
+                Score score = new Score();
 
-        scoreRepository.save(score);
+                score.setWork(work);
+                score.setUser(user);
+                score.setScore(request.score());
+                scoreRepository.save(score);
+            }
+        }
 
         Post post = new Post();
 
@@ -222,7 +241,7 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        List<Post> posts = postRepository.findAllByUserId(userId);
+        List<Post> posts = postRepository.findAllByUserId(user.getId());
 
         return posts.stream()
                 .map(this::convertPostToPostResponse)

@@ -1,5 +1,6 @@
 package com.example.api_ecw.posts;
 
+import com.example.api_ecw.enums.WorkType;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.works.Work;
 import org.springframework.data.jpa.repository.JpaRepository;
