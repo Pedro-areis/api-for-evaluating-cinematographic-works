@@ -31,10 +31,10 @@ public class ScoreService {
     public ScoreResponse giveScore(ScoreRequest request, UUID userId, Integer tmdbId) {
         Work work;
         if (request.type() == WorkType.movie) {
-            work = workRepository.findByTmdbId(tmdbId)
+            work = workRepository.findByTmdbIdAndType(tmdbId, request.type())
                     .orElseGet(() -> watchlistService.createMovieFromTmdbId(tmdbId));
         } else {
-            work = workRepository.findByTmdbId(tmdbId)
+            work = workRepository.findByTmdbIdAndType(tmdbId, request.type())
                     .orElseGet(() -> watchlistService.createTvFromTmdbId(tmdbId));
         }
 
