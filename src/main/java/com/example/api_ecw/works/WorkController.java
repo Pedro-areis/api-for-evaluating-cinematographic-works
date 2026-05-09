@@ -15,21 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class WorkController {
     private final TmdbIntegrationService tmdbIntegrationService;
-    private final WorkService workService;
 
     @GetMapping("/search/{title}")
     public ResponseEntity<TmdbSearchResponse> getWorkByTitle(@PathVariable String title) {
         TmdbSearchResponse response = tmdbIntegrationService.getWorkByTitle(title);
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PostMapping("/new")
-    public ResponseEntity<WorkResponse> createWork(
-            @Valid
-            @RequestBody WorkRequest work
-    ) {
-        WorkResponse response = workService.create(work);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
