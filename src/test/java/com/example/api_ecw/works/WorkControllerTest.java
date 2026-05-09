@@ -5,6 +5,7 @@ import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
 import com.example.api_ecw.tmdb_api.dto.TmdbSearchResponse;
 import com.example.api_ecw.tmdb_api.dto.TmdbWorkResponse;
 import com.example.api_ecw.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,8 +44,8 @@ class WorkControllerTest {
     @Nested
     class GetWorkByTitle {
         @Test
-        @DisplayName("should return 200 when search is successful")
-        void shouldReturn200_WhenSearchIsSuccessful() throws Exception {
+        @DisplayName("Should return 200 when search is successful")
+        void shouldReturn200_WhenSearchIsSuccessful () throws Exception {
             // Arrange
             String title = "test";
 
@@ -75,6 +76,21 @@ class WorkControllerTest {
                         .with(user("admin").roles("USER")))
                     .andExpect(status().isOk())
                     .andExpect(content().json(json));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when search is empty")
+        void shouldReturn404_WhenSearchIsEmpty () throws Exception {
+            // Arrange
+            String title = " ";
+            when(tmdbIntegrationService.getWorkByTitle(title))
+                    .thenThrow(new EntityNotFoundException());
+
+            // Act & Assert
+            mockMvc.perform(get("/api/works/search/{title}", title)
+                        .with(csrf())
+                        .with(user("admin").roles("USER")))
+                    .andExpect(status().isNotFound());
         }
     }
 
