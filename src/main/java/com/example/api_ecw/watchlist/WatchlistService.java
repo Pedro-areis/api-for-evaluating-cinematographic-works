@@ -168,7 +168,7 @@ public class WatchlistService {
     }
 
     private AllWatchlistResponse convertFromDTO(Watchlist watchlist) {
-        return new  AllWatchlistResponse(
+        return new AllWatchlistResponse(
                 watchlist.getId(),
                 watchlist.getWork().getId(),
                 watchlist.getUser().getId(),

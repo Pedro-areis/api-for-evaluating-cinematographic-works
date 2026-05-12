@@ -9,6 +9,7 @@ import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
 import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
+import com.example.api_ecw.watchlist.dto.AllWatchlistResponse;
 import com.example.api_ecw.works.Work;
 import com.example.api_ecw.works.WorkRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,7 +24,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -56,27 +59,15 @@ class WatchlistServiceTest {
     @BeforeEach
     void setUp() {
         movie = new Work(
-                UUID.randomUUID(),
-                "movie",
-                "synopsis",
-                10.0f,
-                WorkType.movie,
-                LocalDate.parse("2023-01-01"),
-                LocalDateTime.now(),
-                List.of(1,2,3),
-                1
+                UUID.randomUUID(), "movie","synopsis", 10.0f,
+                WorkType.movie, LocalDate.parse("2023-01-01"), LocalDateTime.now(),
+                List.of(1,2,3), 1
         );
 
         tv = new Work(
-                UUID.randomUUID(),
-                "series",
-                "synopsis",
-                10.0f,
-                WorkType.series,
-                LocalDate.parse("2023-01-01"),
-                LocalDateTime.now(),
-                List.of(1,2,3),
-                1
+                UUID.randomUUID(), "series", "synopsis", 10.0f, WorkType.series,
+                LocalDate.parse("2023-01-01"), LocalDateTime.now(),
+                List.of(1,2,3), 1
         );
     }
 
@@ -383,6 +374,158 @@ class WatchlistServiceTest {
             assertEquals(List.of(1), result.getGenreIds());
 
             verify(workRepository).save(any(Work.class));
+        }
+    }
+
+    @Nested
+    class getAllWorksFromWatchlist {
+        @Test
+        @DisplayName("Should get all works from watchlist with success")
+        void shouldGetAllWorksFromWatchlistWithSuccess () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            UUID watchlistId = UUID.randomUUID();
+
+            User user = new User();
+            user.setId(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+            Watchlist watchlist = new Watchlist(watchlistId, "workName", user,
+                    movie, WorkType.movie, WorkStatus.pending, LocalDateTime.now());
+
+            when(watchlistRepository.findAllByUserId(user.getId()))
+                    .thenReturn(List.of(watchlist));
+            // Act
+            List<AllWatchlistResponse> result = watchlistService.getAllWorksFromWatchlist(userId);
+
+            // Assert
+            assertEquals(1, result.size());
+            assertEquals("workName", result.getFirst().name());
+            assertEquals(WorkType.movie, result.getFirst().type());
+            assertEquals(WorkStatus.pending, result.getFirst().status());
+
+            verify(watchlistRepository).findAllByUserId(userId);
+        }
+
+        @Test
+        @DisplayName("Should exception when User not found")
+        void shouldExceptionWhenUserNotFound () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.getAllWorksFromWatchlist(userId));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class updateStatusForWatched {
+        @Test
+        @DisplayName("Should to update work for watched and add score")
+        void shouldToUpdateWorkForWatchedAndAddScore () {
+            // Arrange
+            BigDecimal score = BigDecimal.TEN;
+
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            Watchlist watchlist = new Watchlist(UUID.randomUUID(), "workName", user,
+                    movie, WorkType.movie, WorkStatus.pending, LocalDateTime.now());
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.findByUserIdAndWorkId(userId, movie.getId()))
+                    .thenReturn(Optional.of(watchlist));
+
+            // Act
+            var result = watchlistService.updateStatusForWatched(score, userId, movie.getId());
+
+            // Assert
+            verify(watchlistRepository).save(watchlistCaptor.capture());
+
+            Watchlist saved = watchlistCaptor.getValue();
+
+            assertEquals("workName", saved.getName());
+            assertEquals(WorkType.movie, saved.getType());
+            assertEquals(WorkStatus.watched, saved.getStatus());
+            assertEquals(10.0f, saved.getWork().getScore());
+
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Should exception when Work not found")
+        void shouldExceptionWhenWorkNotFound () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.updateStatusForWatched(BigDecimal.TEN, userId, movie.getId()));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should exception when User not found")
+        void shouldExceptionWhenUserNotFound () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.updateStatusForWatched(BigDecimal.TEN, userId, movie.getId()));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should exception when Watchlist not found")
+        void shouldExceptionWhenWatchlistNotFound () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            User user = new  User();
+            user.setId(userId);
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.findByUserIdAndWorkId(userId, movie.getId())).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(BadCredentialsException.class,
+                    () -> watchlistService.updateStatusForWatched(BigDecimal.TEN, userId, movie.getId()));
+            verify(watchlistRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should exception when work in watchlist already gone watch")
+        void shouldExceptionWhenWorkInWatchlistAlreadyGoneWatched () {
+            // Arrange
+            UUID userId = UUID.randomUUID();
+            User user = new  User();
+            user.setId(userId);
+
+            Watchlist watchlist = new Watchlist(UUID.randomUUID(), "workName", user,
+                    movie, WorkType.movie, WorkStatus.watched, LocalDateTime.now());
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.findByUserIdAndWorkId(userId, movie.getId()))
+                    .thenReturn(Optional.of(watchlist));
+
+            // Act & Assert
+            assertThrows(DataIntegrityViolationException.class,
+                    () -> watchlistService.updateStatusForWatched(BigDecimal.TEN, userId, movie.getId()));
+            verify(watchlistRepository, never()).save(any());
         }
     }
 }
