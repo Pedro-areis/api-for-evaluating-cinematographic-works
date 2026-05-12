@@ -6,6 +6,7 @@ import com.example.api_ecw.scores.ScoreRepository;
 import com.example.api_ecw.tmdb_api.TmdbIntegrationService;
 import com.example.api_ecw.tmdb_api.dto.TmdbGenre;
 import com.example.api_ecw.tmdb_api.dto.TmdbMovieResponse;
+import com.example.api_ecw.tmdb_api.dto.TmdbTvResponse;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
 import com.example.api_ecw.works.Work;
@@ -49,16 +50,29 @@ class WatchlistServiceTest {
     @InjectMocks
     private WatchlistService watchlistService;
 
-    private Work work;
+    private Work movie;
+    private Work tv;
 
     @BeforeEach
     void setUp() {
-        work = new Work(
+        movie = new Work(
                 UUID.randomUUID(),
                 "movie",
                 "synopsis",
                 10.0f,
                 WorkType.movie,
+                LocalDate.parse("2023-01-01"),
+                LocalDateTime.now(),
+                List.of(1,2,3),
+                1
+        );
+
+        tv = new Work(
+                UUID.randomUUID(),
+                "series",
+                "synopsis",
+                10.0f,
+                WorkType.series,
                 LocalDate.parse("2023-01-01"),
                 LocalDateTime.now(),
                 List.of(1,2,3),
@@ -78,9 +92,9 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(work));
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-            when(watchlistRepository.existsByUserAndWorkAndType(user, work, WorkType.movie))
+            when(watchlistRepository.existsByUserAndWorkAndType(user, movie, WorkType.movie))
                     .thenReturn(false);
             when(watchlistRepository.save(any(Watchlist.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -95,7 +109,7 @@ class WatchlistServiceTest {
             assertEquals("movie", saved.getName());
             assertEquals(WorkStatus.pending, saved.getStatus());
             assertEquals(WorkType.movie, saved.getType());
-            assertEquals(work, saved.getWork());
+            assertEquals(movie, saved.getWork());
             assertEquals(user, saved.getUser());
 
             assertNotNull(result);
@@ -161,7 +175,7 @@ class WatchlistServiceTest {
             Integer tmdbId = 1;
             UUID userId = UUID.randomUUID();
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(work));
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             // Act & Assert
@@ -180,9 +194,9 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(work));
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-            when(watchlistRepository.existsByUserAndWorkAndType(user, work, WorkType.movie))
+            when(watchlistRepository.existsByUserAndWorkAndType(user, movie, WorkType.movie))
                     .thenReturn(true);
 
             // Act & Assert
@@ -190,6 +204,144 @@ class WatchlistServiceTest {
                     () -> watchlistService.addMovieToWatchlist(userId, tmdbId));
 
             verify(watchlistRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class addTvToWatchlist {
+        @Test
+        @DisplayName("Should add tv to watchlist with success")
+        void shouldAddTvToWatchlist() {
+            // Arrange
+            Integer tmdbId = 1;
+            UUID userId = UUID.randomUUID();
+
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.existsByUserAndWorkAndType(user, tv, WorkType.movie))
+                    .thenReturn(false);
+            when(watchlistRepository.save(any(Watchlist.class))).thenAnswer(i -> i.getArgument(0));
+
+            // Act
+            var result = watchlistService.addMovieToWatchlist(userId, tmdbId);
+
+            // Assert
+            verify(watchlistRepository).save(watchlistCaptor.capture());
+
+            Watchlist saved = watchlistCaptor.getValue();
+
+            assertEquals("series", saved.getName());
+            assertEquals(WorkStatus.pending, saved.getStatus());
+            assertEquals(WorkType.movie, saved.getType());
+            assertEquals(tv, saved.getWork());
+            assertEquals(user, saved.getUser());
+
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Should add tv to database when not exist")
+        void shouldAddTvToDataBaseWhenNotExist () {
+            // Arrange
+            Integer tmdbId = 1;
+            UUID userId = UUID.randomUUID();
+
+            TmdbTvResponse response = new TmdbTvResponse(
+                    1,
+                    "originalName",
+                    "name",
+                    "pt-BR",
+                    "1999-01-01",
+                    "overview",
+                    List.of(
+                            new TmdbGenre(1, "test")
+                    )
+            );
+
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.empty());
+            when(tmdbIntegrationService.getTvByTmdbId(tmdbId)).thenReturn(response);
+
+            when(workRepository.save(any(Work.class))).thenAnswer(i -> i.getArgument(0));
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.existsByUserAndWorkAndType(
+                    eq(user),
+                    any(Work.class),
+                    eq(WorkType.series)
+            )).thenReturn(false);
+
+            when(watchlistRepository.save(any(Watchlist.class))).thenAnswer(i -> i.getArgument(0));
+
+            // Act
+            var result = watchlistService.addTvToWatchlist(userId, tmdbId);
+
+            // Assert
+            verify(watchlistRepository).save(watchlistCaptor.capture());
+
+            Watchlist saved = watchlistCaptor.getValue();
+
+            assertEquals("name", saved.getName());
+            assertEquals(WorkStatus.pending, saved.getStatus());
+            assertEquals(WorkType.series, saved.getType());
+            assertEquals(user, saved.getUser());
+
+            assertNotNull(saved.getWork());
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Should throw exception when user not found")
+        void shouldExceptionWhenUserNotFound () {
+            // Arrange
+            Integer tmdbId = 1;
+            UUID userId = UUID.randomUUID();
+
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.addTvToWatchlist(userId, tmdbId));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should throw exception when tv exists by user and same type")
+        void shouldExceptionWhenTvExistsByUserAndSameType () {
+            // Arrange
+            Integer tmdbId = 1;
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.existsByUserAndWorkAndType(user, tv, WorkType.series))
+                    .thenReturn(true);
+
+            // Act & Assert
+            assertThrows(DataIntegrityViolationException.class,
+                    () -> watchlistService.addTvToWatchlist(userId, tmdbId));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class createMovieFromTmdbId {
+        @Test
+        @DisplayName("Should map tmdb response to work correctly")
+        void shouldMapTmdbResponseToWorkCorrectly () {
+            // Arrange
+            // Act
+            // Assert
         }
     }
 }
