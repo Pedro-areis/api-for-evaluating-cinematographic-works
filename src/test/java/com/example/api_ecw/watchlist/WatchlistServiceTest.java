@@ -340,8 +340,49 @@ class WatchlistServiceTest {
         @DisplayName("Should map tmdb response to work correctly")
         void shouldMapTmdbResponseToWorkCorrectly () {
             // Arrange
+            Integer tmdbId = 123;
+            TmdbMovieResponse response = new TmdbMovieResponse(tmdbId, "originalTitle",
+                    "title", "pt-BR", "1999-01-01", "overview", List.of(
+                            new TmdbGenre(1, "test")
+                    ));
+            when(tmdbIntegrationService.getMovieByTmdbId(tmdbId))
+                    .thenReturn(response);
+            when(workRepository.save(any(Work.class))).thenAnswer(i -> i.getArgument(0));
             // Act
+            Work result = watchlistService.createMovieFromTmdbId(tmdbId);
+
             // Assert
+            assertEquals("title", result.getTitle());
+            assertEquals(LocalDate.of(1999, 1, 1), result.getReleaseDate());
+            assertEquals(List.of(1), result.getGenreIds());
+
+            verify(workRepository).save(any(Work.class));
+        }
+    }
+
+    @Nested
+    class createTvFromTmdbId {
+        @Test
+        @DisplayName("Should map tmdb response to work correctly")
+        void shouldMapTmdbResponseToWorkCorrectly () {
+            // Arrange
+            Integer tmdbId = 123;
+            TmdbTvResponse response = new TmdbTvResponse(tmdbId, "originalName",
+                    "name", "pt-BR", "1999-01-01", "overview", List.of(
+                    new TmdbGenre(1, "test")
+            ));
+            when(tmdbIntegrationService.getTvByTmdbId(tmdbId))
+                    .thenReturn(response);
+            when(workRepository.save(any(Work.class))).thenAnswer(i -> i.getArgument(0));
+            // Act
+            Work result = watchlistService.createTvFromTmdbId(tmdbId);
+
+            // Assert
+            assertEquals("name", result.getTitle());
+            assertEquals(LocalDate.of(1999, 1, 1), result.getReleaseDate());
+            assertEquals(List.of(1), result.getGenreIds());
+
+            verify(workRepository).save(any(Work.class));
         }
     }
 }
