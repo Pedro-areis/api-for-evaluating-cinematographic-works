@@ -21,6 +21,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -165,6 +166,27 @@ class WatchlistServiceTest {
 
             // Act & Assert
             assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.addMovieToWatchlist(userId, tmdbId));
+
+            verify(watchlistRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should throw exception when work exists by user and same type")
+        void shouldExceptionWhenWorkExistsByUserAndSameType() {
+            // Arrange
+            Integer tmdbId = 1;
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(work));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.existsByUserAndWorkAndType(user, work, WorkType.movie))
+                    .thenReturn(true);
+
+            // Act & Assert
+            assertThrows(DataIntegrityViolationException.class,
                     () -> watchlistService.addMovieToWatchlist(userId, tmdbId));
 
             verify(watchlistRepository, never()).save(any());
