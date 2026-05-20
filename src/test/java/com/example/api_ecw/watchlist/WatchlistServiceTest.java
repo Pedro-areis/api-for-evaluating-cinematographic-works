@@ -528,4 +528,81 @@ class WatchlistServiceTest {
             verify(watchlistRepository, never()).save(any());
         }
     }
+
+    @Nested
+    class removeWork {
+        @Test
+        @DisplayName("Should delete Work with success")
+        void shouldDeleteWorkWithSuccess () {
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            Watchlist watchlist = new Watchlist(UUID.randomUUID(), "workName", user,
+                    movie, WorkType.movie, WorkStatus.pending, LocalDateTime.now());
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.findByUserIdAndWorkId(userId, movie.getId()))
+                    .thenReturn(Optional.of(watchlist));
+
+            var result = watchlistService.removeWork(userId, movie.getId());
+
+            verify(watchlistRepository).delete(watchlistCaptor.capture());
+
+            Watchlist saved = watchlistCaptor.getValue();
+
+            assertEquals("workName", saved.getName());
+            assertEquals(WorkType.movie, saved.getType());
+            assertEquals(WorkStatus.pending, saved.getStatus());
+
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Should Exception When Work Not Found")
+        void shouldExceptionWhenWorkNotFound () {
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.empty());
+
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.removeWork(userId, movie.getId()));
+            verify(watchlistRepository, never()).delete(any());
+        }
+
+        @Test
+        @DisplayName("Should Exception when User Not Found")
+        void shouldExceptionWhenUserNotFound () {
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            assertThrows(EntityNotFoundException.class,
+                    () -> watchlistService.removeWork(userId, movie.getId()));
+            verify(watchlistRepository, never()).delete(any());
+        }
+
+        @Test
+        @DisplayName("Should exception when watchlist not found")
+        void shouldExceptionWhenWatchlistNotFound () {
+            UUID userId = UUID.randomUUID();
+            User user = new User();
+            user.setId(userId);
+
+            when(workRepository.findById(movie.getId())).thenReturn(Optional.of(movie));
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(watchlistRepository.findByUserIdAndWorkId(userId, movie.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(BadCredentialsException.class,
+                    () -> watchlistService.removeWork(userId, movie.getId()));
+            verify(watchlistRepository, never()).delete(any());
+        }
+    }
 }
