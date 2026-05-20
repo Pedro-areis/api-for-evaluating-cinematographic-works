@@ -205,7 +205,7 @@ public class WatchlistService {
         scoreRepository.save(newScore);
         watchlistRepository.save(watchlist);
 
-        return new WatchlistUpdated(
+        return new WatchlistUpdated (
                 watchlist.getWork().getId(),
                 watchlist.getName(),
                 work.getScore(),
