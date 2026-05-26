@@ -176,34 +176,4 @@ class WatchlistControllerTest {
                     .andExpect(status().isNotFound());
         }
     }
-
-//    @Nested
-//    class getWatchlist {
-//        @Test
-//        @DisplayName("Should return 200 when get watchlist for user")
-//        void shouldReturn200_WhenGetWatchlistForUser () throws Exception {
-//            // Arrange
-//            AllWatchlistResponse responseList = new AllWatchlistResponse(
-//                    UUID.randomUUID(),
-//                    UUID.randomUUID(),
-//                    loggedUser.getId(),
-//                    "name",
-//                    10.0f,
-//                    WorkType.movie,
-//                    WorkStatus.pending,
-//                    LocalDateTime.now()
-//            );
-//            when(watchlistService.getAllWorksFromWatchlist(loggedUser.getId()))
-//                    .thenReturn(List.of(responseList));
-//
-//            String json = objectMapper.writeValueAsString(responseList);
-//
-//            // Act & Assert
-//            mockMvc.perform(get("/api/watchlist/my-watchlist")
-//                        .with(csrf())
-//                        .with(authentication(authToken)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().json(json));
-//        }
-//    }
 }
