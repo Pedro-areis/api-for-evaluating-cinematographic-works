@@ -3,12 +3,12 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
-    container_name: ewc_db_container
+    container_name: ecw_db_container
     restart: always
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: postgres
-      POSTGRES_DB: ewc_db
+      POSTGRES_DB: ecw_db
     ports:
       - "5432:5432"
     volumes:
@@ -16,7 +16,7 @@ services:
 
   api:
     build: .
-    container_name: ewc_api_container
+    container_name: ecw_api_container
     restart: always
     ports:
       - "8080:8080"
