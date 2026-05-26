@@ -5,6 +5,7 @@ import com.example.api_ecw.enums.WorkType;
 import com.example.api_ecw.infra.config.TokenService;
 import com.example.api_ecw.user.User;
 import com.example.api_ecw.user.UserRepository;
+import com.example.api_ecw.watchlist.dto.AllWatchlistResponse;
 import com.example.api_ecw.watchlist.dto.WatchlistResponse;
 import com.example.api_ecw.works.WorkRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WatchlistController.class)
@@ -175,12 +177,33 @@ class WatchlistControllerTest {
         }
     }
 
-    @Nested
-    class getWatchlist {
-        @Test
-        @DisplayName("Should return 200 when get watchlist for user ")
-        void shouldReturn200_WhenGetWatchlistForUser () throws Exception {
-
-        }
-    }
+//    @Nested
+//    class getWatchlist {
+//        @Test
+//        @DisplayName("Should return 200 when get watchlist for user")
+//        void shouldReturn200_WhenGetWatchlistForUser () throws Exception {
+//            // Arrange
+//            AllWatchlistResponse responseList = new AllWatchlistResponse(
+//                    UUID.randomUUID(),
+//                    UUID.randomUUID(),
+//                    loggedUser.getId(),
+//                    "name",
+//                    10.0f,
+//                    WorkType.movie,
+//                    WorkStatus.pending,
+//                    LocalDateTime.now()
+//            );
+//            when(watchlistService.getAllWorksFromWatchlist(loggedUser.getId()))
+//                    .thenReturn(List.of(responseList));
+//
+//            String json = objectMapper.writeValueAsString(responseList);
+//
+//            // Act & Assert
+//            mockMvc.perform(get("/api/watchlist/my-watchlist")
+//                        .with(csrf())
+//                        .with(authentication(authToken)))
+//                    .andExpect(status().isOk())
+//                    .andExpect(content().json(json));
+//        }
+//    }
 }
