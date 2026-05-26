@@ -168,7 +168,7 @@ public class WatchlistService {
     }
 
     private AllWatchlistResponse convertFromDTO(Watchlist watchlist) {
-        return new  AllWatchlistResponse(
+        return new AllWatchlistResponse(
                 watchlist.getId(),
                 watchlist.getWork().getId(),
                 watchlist.getUser().getId(),
@@ -205,7 +205,7 @@ public class WatchlistService {
         scoreRepository.save(newScore);
         watchlistRepository.save(watchlist);
 
-        return new WatchlistUpdated(
+        return new WatchlistUpdated (
                 watchlist.getWork().getId(),
                 watchlist.getName(),
                 work.getScore(),
