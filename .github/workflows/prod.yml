@@ -17,6 +17,8 @@ jobs:
               POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
               POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
               POSTGRES_DB: ecw_db
+              TMDB_SECRET_TOKEN: ${{ secrets.TMDB_SECRET_TOKEN }}
+              TMDB_API_PUBLIC_KEY: ${{ secrets.TMDB_API_PUBLIC_KEY }}
             ports:
               - 5432:5432
             options: >-
