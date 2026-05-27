@@ -40,6 +40,8 @@ jobs:
               run: chmod +x ./mvnw
 
             - name: Run tests
+              env:
+                DB_HOST: 127.0.0.1
               run: ./mvnw test
 
             - name: Build with Maven
