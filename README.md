@@ -1,26 +1,16 @@
 # API for Evaluating Cinematographic Works 🎥
 API para análise de filmes/séries com Watchlist e comentários da comunidade.
 
-## Configuração application.properties ⚙️
+## Configuração do arquivo .env ⚙️
 
 ```java
-# Conexão com o banco de dados PostgreSQL
-spring.datasource.url=jdbc:postgresql://localhost:<porta>/seu-banco
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
-spring.datasource.driver-class-name=org.postgresql.Driver
+# Configurações do Banco de Dados
+DB_PASSWORD={SUA_SENHA_DO_BANCO_DE_DADOS_POSTGRES}
 
-# Configurações recomendadas para o Flyway
-spring.flyway.enabled=true
-spring.flyway.baseline-on-migrate=true
+# Segurança da API (JWT)
+JWT_SECRET_KEY=chave_ultra_mega_secreta
 
-# Ignora a versão mais recente do PostgreSQL
-spring.flyway.plugin-register.database-type-ignore-categories=true
-
-# Chave Secreta para criação e validação de Token com JWT
-api_ecw.token.secret="sua_chave_ultra_mega_secreta"
-
-# Configuração da API TMDb
-tmdb.api.url=https://api.themoviedb.org/3
-tmdb.api.token=SEU_TOKEN_DE_LEITURA_AQUI
+# Integração com a API do TMDB
+TMDB_SECRET_TOKEN={SEU_TOKEN_DA_API}
+TMDB_API_PUBLIC_KEY={SUA_CHAVE_DA_API}
 ```
