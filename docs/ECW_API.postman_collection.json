@@ -1,0 +1,1171 @@
+{
+  "info": {
+    "_postman_id": "6803baa5-1fed-4e78-82e9-7aca6a89fdd5",
+    "name": "ECW_API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51768680",
+    "_collection_link": "https://go.postman.co/collection/51768680-6803baa5-1fed-4e78-82e9-7aca6a89fdd5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Carlos\",\r\n    \"email\": \"carlos@gmail.com\",\r\n    \"password\": \"admin\",\r\n    \"dateBirth\": \"2003-04-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiYW5hLmNsYXJhQGdtYWlsLmNvbSIsImV4cCI6MTc3NjkwNjQ3NX0.AadshFlel81oNTVyDqMDSjljvywa7EcJtkq4-IFITyc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"teste@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users/update/68c83d44-4507-44bf-b7e5-9c756bbe9321",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users",
+                "update",
+                "68c83d44-4507-44bf-b7e5-9c756bbe9321"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoicGVkcm9AZXhhbXBsZS5jb20iLCJleHAiOjE3NzQ5MDg1Nzl9.vLv6IMJT6zIpKFZQr6pJ6I2xTD-pVLkM33yso_wNHkk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Juliana Reis\",\r\n    \"email\": \"pedro.a.reis@example.com\",\r\n    \"passwordHash\": \"admin\",\r\n    \"dateBirth\": \"1990-01-01\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users/delete/667b4e36-58e2-4df0-ae38-9cbda9b44777",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users",
+                "delete",
+                "667b4e36-58e2-4df0-ae38-9cbda9b44777"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"juliana.reis@gmail.com\",\r\n    \"password\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "TMDb API",
+      "item": [
+        {
+          "name": "Search by name",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZjIxMjNjNmNkMDY3YjAzOTQ3ODdiNDMwODkwZDRkYiIsIm5iZiI6MTc3NjI5MTI1Mi4zODIwMDAyLCJzdWIiOiI2OWUwMGRiNGJiMDdlOWYwMzRhZjk0NDMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ANen5_J_4RPkJ_Doqr1NARq70FVPSF4tGznMsh6lyi0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.themoviedb.org/3/search/multi?query=sobrenatural&include_adult=false&language=pt-BR&page=1&api_key=ff2123c6cd067b0394787b430890d4db",
+              "protocol": "https",
+              "host": [
+                "api",
+                "themoviedb",
+                "org"
+              ],
+              "path": [
+                "3",
+                "search",
+                "multi"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "sobrenatural"
+                },
+                {
+                  "key": "include_adult",
+                  "value": "false"
+                },
+                {
+                  "key": "language",
+                  "value": "pt-BR"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "api_key",
+                  "value": "ff2123c6cd067b0394787b430890d4db"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://api.themoviedb.org/3/tv/188621?language=pt-BR&api_key=ff2123c6cd067b0394787b430890d4db",
+              "protocol": "http",
+              "host": [
+                "api",
+                "themoviedb",
+                "org"
+              ],
+              "path": [
+                "3",
+                "tv",
+                "188621"
+              ],
+              "query": [
+                {
+                  "key": "language",
+                  "value": "pt-BR"
+                },
+                {
+                  "key": "api_key",
+                  "value": "ff2123c6cd067b0394787b430890d4db"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Works",
+      "item": [
+        {
+          "name": "GET",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE1ODM2NX0._KDB79ynAzCQ1k4Dj7hDTTz1Nd4RO7Ph9CHoWOdOEKA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/works/search/capitao",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "works",
+                "search",
+                "capitao"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CREATE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc2OTgwNjQ1fQ.wd396Df3mo3NWQI1gLHwpQKFsMJs3rwSWsx85AVxWQc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Loki\",\r\n    \"synopsis\": \"Thisrequest is used to retrieve a list ...\",\r\n    \"type\": \"series\",\r\n    \"genreIds\": [1, 50],\r\n    \"tmdbId\": 30,\r\n    \"releaseDate\": \"2020-04-01\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/works/new",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "works",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Watchlist",
+      "item": [
+        {
+          "name": "Add Movie From Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE4MjExM30.denxVd1NSJIKGI0x5wAn7NAr2gk7dvEawauCWrXeUFM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/watchlist/add-movie/557",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "watchlist",
+                "add-movie",
+                "557"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Tv From Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3NzkwNDk3Nn0.gEeSgAdsunS_C9Xe7SsPxe1uS5kyAfKFKPab3bcAL_s",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/watchlist/add-tv/1400",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "watchlist",
+                "add-tv",
+                "1400"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Watchlist For User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE1ODM2NX0._KDB79ynAzCQ1k4Dj7hDTTz1Nd4RO7Ph9CHoWOdOEKA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/watchlist/my-watchlist",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "watchlist",
+                "my-watchlist"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Work For Watched",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE4MjExM30.denxVd1NSJIKGI0x5wAn7NAr2gk7dvEawauCWrXeUFM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"workScore\": 8.7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/watchlist/update-status-from/b544f068-1c9f-45b2-9ad2-d8eabf55c71c",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "watchlist",
+                "update-status-from",
+                "b544f068-1c9f-45b2-9ad2-d8eabf55c71c"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delele Work From Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3NzkwNjI0N30.V0mRfi6T4cZCJOGfFdji5lfW5j7XBkYPXkGu7nKojHU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/watchlist/delete-from-watchlist/9dc58d51-1cdc-4de8-a2e0-255aa44e4127",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "watchlist",
+                "delete-from-watchlist",
+                "9dc58d51-1cdc-4de8-a2e0-255aa44e4127"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Make Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODU5NDM4Nn0.8DE-mCIt3-PDgiIILF0uqZ6lP9DgpU2MDQPS_oeDp-Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"Teste 6\",\r\n    \"type\": \"series\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/posts/new-post/299534",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "new-post",
+                "299534"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Post From Work",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MTU2ODQyfQ.qqWt6d6uiAntjeizEeRGUFqqxrHhrfmsMLrZ7dYM8-E",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/posts/all-posts-from-work/5f07961a-8d06-4af3-a92c-5b3074186d97",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "all-posts-from-work",
+                "5f07961a-8d06-4af3-a92c-5b3074186d97"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MDc4NDIwfQ.ztFN5TeB1uyf2Ipx7TKXl1zVI-wk6OvNpbOLk95I85Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"Bao demais\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/posts/edit-post/93e5e028-4839-4e1c-b842-ebaf3da65ed4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "edit-post",
+                "93e5e028-4839-4e1c-b842-ebaf3da65ed4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MDc4NDIwfQ.ztFN5TeB1uyf2Ipx7TKXl1zVI-wk6OvNpbOLk95I85Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/posts/delete-post/00999f9e-b80d-4693-b80a-732badb52d7c",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "delete-post",
+                "00999f9e-b80d-4693-b80a-732badb52d7c"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All My Posts",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3ODEwOTcxMn0.JSFb3wMOpcxgXCJ-3OeMVNnLJgZdCyXGpPow6YFSlis",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/posts/all-my-posts",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "all-my-posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Timeline",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MTU2ODQyfQ.qqWt6d6uiAntjeizEeRGUFqqxrHhrfmsMLrZ7dYM8-E",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/posts/timeline",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "timeline"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Posts From Another User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3ODEwOTcxMn0.JSFb3wMOpcxgXCJ-3OeMVNnLJgZdCyXGpPow6YFSlis",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/posts/all-posts-from-user/68c83d44-4507-44bf-b7e5-9c756bbe9321",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "posts",
+                "all-posts-from-user",
+                "68c83d44-4507-44bf-b7e5-9c756bbe9321"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Make Comment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MDg3NzMzfQ.y7ZVoZlQW3AKIqUGY_6egWHGAAJp_IoEOKvjUBUj32k",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"Adicionei na minha Watchlist para não esquecer de rever.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comments/93e5e028-4839-4e1c-b842-ebaf3da65ed4/make",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comments",
+                "93e5e028-4839-4e1c-b842-ebaf3da65ed4",
+                "make"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Make Thread",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODEwNTIxM30.LytNJD-xRfWkxHwB0sLjoA9Y5ud46Nv4DHpCwvHSxv0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"Comentário do comentário kkkk\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comments/make-thread/152237b1-3663-4cd1-988a-ed9002124716",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comments",
+                "make-thread",
+                "152237b1-3663-4cd1-988a-ed9002124716"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Thread",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MDg3NzMzfQ.y7ZVoZlQW3AKIqUGY_6egWHGAAJp_IoEOKvjUBUj32k",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comments/thread/a99c1862-f75c-4cce-b6a8-a91d960541b2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comments",
+                "thread",
+                "a99c1862-f75c-4cce-b6a8-a91d960541b2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Comments From Post",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MDg3NzMzfQ.y7ZVoZlQW3AKIqUGY_6egWHGAAJp_IoEOKvjUBUj32k",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comments/comments-from-post/93e5e028-4839-4e1c-b842-ebaf3da65ed4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comments",
+                "comments-from-post",
+                "93e5e028-4839-4e1c-b842-ebaf3da65ed4"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Post Likes",
+      "item": [
+        {
+          "name": "Like the post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3ODUzMjQ5OH0.m6-6XyDmtIGB9yli8r6jJbY6V14IpvmHpzhjH9JAzwo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/post-likes/5d163840-2182-42fa-a2db-1a8cd399a768",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "post-likes",
+                "5d163840-2182-42fa-a2db-1a8cd399a768"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Likes From Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE1ODM2NX0._KDB79ynAzCQ1k4Dj7hDTTz1Nd4RO7Ph9CHoWOdOEKA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/post-likes/likes/00999f9e-b80d-4693-b80a-732badb52d7c",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "post-likes",
+                "likes",
+                "00999f9e-b80d-4693-b80a-732badb52d7c"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Scores",
+      "item": [
+        {
+          "name": "Give Score",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoiY2FybG9zQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE2OTg4NX0.ATZbashoncLUmnracVfj0QEKQY4tBVucx9VHmO1lAxg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"score\": 3,\r\n    \"type\": \"series\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/scores/give-score/299534",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "scores",
+                "give-score",
+                "299534"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Score",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoidGVzdGVAZ21haWwuY29tIiwiZXhwIjoxNzc4MTU2ODQyfQ.qqWt6d6uiAntjeizEeRGUFqqxrHhrfmsMLrZ7dYM8-E",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"score\": 4\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/scores/update-score/052b97b2-0018-4679-a09e-2e22bbea0d56",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "scores",
+                "update-score",
+                "052b97b2-0018-4679-a09e-2e22bbea0d56"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comment Likes",
+      "item": [
+        {
+          "name": "Give a like in the comment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE4MjExM30.denxVd1NSJIKGI0x5wAn7NAr2gk7dvEawauCWrXeUFM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comment-likes/a99c1862-f75c-4cce-b6a8-a91d960541b2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comment-likes",
+                "a99c1862-f75c-4cce-b6a8-a91d960541b2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Likes From Comment",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBcGkgRUNXIiwic3ViIjoianVsaWFuYS5yZWlzQGdtYWlsLmNvbSIsImV4cCI6MTc3ODE1ODM2NX0._KDB79ynAzCQ1k4Dj7hDTTz1Nd4RO7Ph9CHoWOdOEKA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/comment-likes/all-likes-from-comment/86aeaffb-12e2-4c9b-a84e-09d08383c65b",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "comment-likes",
+                "all-likes-from-comment",
+                "86aeaffb-12e2-4c9b-a84e-09d08383c65b"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
