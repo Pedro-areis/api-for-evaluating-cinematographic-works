@@ -209,7 +209,7 @@ public class WatchlistController {
                                             }"""
                             )
                     )
-            ),
+            )
     })
     public ResponseEntity<WatchlistUpdated> updateStatusForWatched(
             @AuthenticationPrincipal User loggedUser,
@@ -237,7 +237,7 @@ public class WatchlistController {
                                             {
                                               "status" : "404",
                                               "error" : "NOT_FOUND",
-                                              "message" : "Usuário não encontrado na base de dados."
+                                              "message" : "Usuário não encontrado na base de dados"
                                             }"""
                             )
                     )
