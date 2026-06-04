@@ -40,7 +40,7 @@ public class WatchlistService {
 
     @Transactional
     public WatchlistResponse addMovieToWatchlist(UUID userId, Integer tmdbId) {
-        Work work = workRepository.findByTmdbId(tmdbId)
+        Work work = workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)
                 .orElseGet(() -> createMovieFromTmdbId(tmdbId));
 
         User user = userRepository.findById(userId)
@@ -75,7 +75,7 @@ public class WatchlistService {
 
     @Transactional
     public WatchlistResponse addTvToWatchlist (UUID userId, Integer tmdbId) {
-        Work work = workRepository.findByTmdbId(tmdbId)
+        Work work = workRepository.findByTmdbIdAndType(tmdbId, WorkType.series)
                 .orElseGet(() -> createTvFromTmdbId(tmdbId));
 
         User user = userRepository.findById(userId)

@@ -83,7 +83,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)).thenReturn(Optional.of(movie));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(watchlistRepository.existsByUserAndWorkAndType(user, movie, WorkType.movie))
                     .thenReturn(false);
@@ -128,7 +128,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.empty());
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)).thenReturn(Optional.empty());
             when(tmdbIntegrationService.getMovieByTmdbId(tmdbId)).thenReturn(response);
 
             when(workRepository.save(any(Work.class))).thenAnswer(i -> i.getArgument(0));
@@ -166,7 +166,7 @@ class WatchlistServiceTest {
             Integer tmdbId = 1;
             UUID userId = UUID.randomUUID();
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)).thenReturn(Optional.of(movie));
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             // Act & Assert
@@ -185,7 +185,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(movie));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)).thenReturn(Optional.of(movie));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(watchlistRepository.existsByUserAndWorkAndType(user, movie, WorkType.movie))
                     .thenReturn(true);
@@ -210,7 +210,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.movie)).thenReturn(Optional.of(tv));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(watchlistRepository.existsByUserAndWorkAndType(user, tv, WorkType.movie))
                     .thenReturn(false);
@@ -255,7 +255,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.empty());
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.series)).thenReturn(Optional.empty());
             when(tmdbIntegrationService.getTvByTmdbId(tmdbId)).thenReturn(response);
 
             when(workRepository.save(any(Work.class))).thenAnswer(i -> i.getArgument(0));
@@ -293,7 +293,7 @@ class WatchlistServiceTest {
             Integer tmdbId = 1;
             UUID userId = UUID.randomUUID();
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.series)).thenReturn(Optional.of(tv));
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             // Act & Assert
@@ -312,7 +312,7 @@ class WatchlistServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(workRepository.findByTmdbId(tmdbId)).thenReturn(Optional.of(tv));
+            when(workRepository.findByTmdbIdAndType(tmdbId, WorkType.series)).thenReturn(Optional.of(tv));
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(watchlistRepository.existsByUserAndWorkAndType(user, tv, WorkType.series))
                     .thenReturn(true);
