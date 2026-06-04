@@ -88,7 +88,7 @@ public class PostLikesController {
     @Operation(summary = "Busca as curtidas do post",
             description = "Obtém o número de curtidas de um post identificado pelo seu ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filme adicionado à watchlist"),
+            @ApiResponse(responseCode = "200", description = "Curtidas do post encontradas com sucesso"),
             @ApiResponse(responseCode = "404",
                     description = "Post não encontrado na base de dados",
                     content = @Content(
