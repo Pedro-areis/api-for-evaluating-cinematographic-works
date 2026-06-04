@@ -2,6 +2,7 @@ package com.example.api_ecw.infra.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -20,7 +21,14 @@ public class SwaggerConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")))
-                .info(new Info().title("API for Evaluating Cinematographic Works").version("1.0"))
+                .info(new Info()
+                        .title("API for Evaluating Cinematographic Works").version("1.0")
+                        .version("v1")
+                        .description("REST API para gerenciamento, análise e avaliação de filmes e séries.")
+                        .contact(new Contact()
+                                .name("Pedro Reis")
+                                .email("preis.dev@gmail.com")
+                                .url("https://github.com/Pedro-areis")))
                 .addSecurityItem(new SecurityRequirement().addList("bearer-key"));
     }
 }
