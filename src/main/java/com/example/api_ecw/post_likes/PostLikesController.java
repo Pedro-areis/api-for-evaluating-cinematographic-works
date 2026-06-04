@@ -103,7 +103,7 @@ public class PostLikesController {
                                             }"""
                             )
                     )
-            ),
+            )
     })
     public ResponseEntity<Integer> getAllLikesFromPost(
             @PathVariable UUID postId
