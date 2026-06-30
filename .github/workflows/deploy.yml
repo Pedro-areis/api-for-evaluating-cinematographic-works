@@ -1,29 +1,11 @@
 name: Deploy
 on:
-  pull_request:
-    branches:
-      - main
   push:
-    branches:
-      - main
-jobs:
-    build:
-        runs-on: ubuntu-latest
-        services:
-          db:
-            image: postgres:15-alpine
-            env:
-              POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-              POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-              POSTGRES_DB: ecw_db
-            ports:
-              - 5432:5432
-            options: >-
-              --health-cmd pg_isready
-              --health-interval 10s
-              --health-timeout 5s
-              --health-retries 5
+    branches: [main]
 
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -32,18 +14,13 @@ jobs:
               uses: actions/setup-java@v4
               with:
                 distribution: 'temurin'
-                java-version: '25'
+                java-version: '21'
                 cache: 'maven'
 
             - name: Maven Wrapper permissions
               run: chmod +x ./mvnw
 
-            - name: Run tests
-              env:
-                DB_HOST: 127.0.0.1
-              run: ./mvnw test
-
-            - name: Build with Maven
+            - name: Build with Maven for Docker
               run: ./mvnw clean package -DskipTests
 
             - name: Build Docker image
@@ -53,17 +30,14 @@ jobs:
                   -t pedro084/api-for-evaluating-cinematographic-works:latest .
 
             - name: Login Docker Hub
-              if: github.event_name == 'push'
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
             - name: Push Docker image
-              if: github.event_name == 'push'
               run: |
                 docker push pedro084/api-for-evaluating-cinematographic-works:${{ github.sha }}
                 docker push pedro084/api-for-evaluating-cinematographic-works:latest
 
             - name: Credentials of AWS
-              if: github.event_name == 'push'
               uses: aws-actions/configure-aws-credentials@v4
               with:
                 aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -71,5 +45,4 @@ jobs:
                 aws-region: us-east-1
 
             - name: Force Deploy in AWS ECS
-              if: github.event_name == 'push'
               run: aws ecs update-service --cluster ecw-cluster --service api-ecw-service --force-new-deployment
